@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -46,7 +47,7 @@ fun AffirmationsPage(navController: NavHostController){
                 // val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                 // val testVar = sharedPrefs.getString("user_name", "User") ?: "User"
                 Text(
-                    text = "Daily Affirmations",
+                    text = stringResource(R.string.topbar_heading),
                     modifier = Modifier.padding(14.dp),
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     style = MaterialTheme.typography.headlineSmall,
@@ -61,19 +62,8 @@ fun AffirmationsPage(navController: NavHostController){
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                     shape = RoundedCornerShape(22.dp)
                 ) {
-                    Icon(Icons.Outlined.Settings, "Settings Icon")
+                    Icon(Icons.Outlined.Settings, stringResource(R.string.topbar_settings_button))
                 }
-                /*
-                IconButton(onClick = {}) {
-                    Icon(
-                        imageVector = Icons.Filled.AccountCircle,
-                        contentDescription = "Localized description",
-                        modifier = Modifier
-                            .size(36.dp),
-
-                    )
-                }
-                 */
             }
         }
         Column(
@@ -84,26 +74,43 @@ fun AffirmationsPage(navController: NavHostController){
                     color = MaterialTheme.colorScheme.secondaryContainer,
                     shape = RoundedCornerShape(22.dp)
                 ),
-            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val dailyAffirmation = "placeholder"
             Text(
                 text = dailyAffirmation,
                 modifier = Modifier
-                    .padding(start = 14.dp),
+                    .padding(top = 10.dp),
                 fontFamily = HarmonyOS_Sans,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
+            val affirmationSource = "source: someone"
             Text(
-                text = "source: someone",
-                modifier = Modifier
-                    .padding(start = 14.dp),
+                text = affirmationSource,
                 fontFamily = HarmonyOS_Sans,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
+            // share sheet (will add back after adding affirmations)
+            /*
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, "Placeholder")
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            val context = LocalContext.current
+            Button(
+                onClick = { context.startActivity(shareIntent)},
+                modifier = Modifier.padding(top = 5.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.share_button),
+                    fontFamily = HarmonyOS_Sans
+                )
+            }
+             */
         }
     }
 }

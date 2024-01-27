@@ -6,12 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,7 +24,6 @@ import androidx.navigation.NavHostController
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 import com.imarti.affirmations.ui.theme.HarmonyOS_Sans
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetupScreen(navController: NavHostController) {
     val context = LocalContext.current
@@ -35,7 +31,6 @@ fun SetupScreen(navController: NavHostController) {
     var userName by rememberSaveable {
         mutableStateOf(sharedPrefs.getString("user_name", "") ?: "User")
     }
-    val timeState = rememberTimePickerState()
     // Same as the bar in main screen (idk if i should add or not)
     /*
     Row (
@@ -80,13 +75,15 @@ fun SetupScreen(navController: NavHostController) {
                 userName = it
                 sharedPrefs.edit().putString("user_name", it).apply()
                 },
-            label = { Text("Name") },
-            placeholder = { Text("") }
+            label = { Text(
+                "Name",
+                fontFamily = HarmonyOS_Sans
+            ) },
+            placeholder = { Text(
+                "",
+                fontFamily = HarmonyOS_Sans
+            ) },
 
-        )
-        TimePicker(
-            state = timeState,
-            modifier = Modifier.padding(14.dp)
         )
         Button(
             onClick = {
@@ -99,7 +96,11 @@ fun SetupScreen(navController: NavHostController) {
             },
             modifier = Modifier.padding(start = 14.dp)
         ) {
-            Text(text = "Done")
+            Text(
+                text = "Done",
+                fontFamily = HarmonyOS_Sans
+
+            )
         }
 
     }

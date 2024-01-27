@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Affirmations</string>
+    <string name="topbar_heading">Daily Affirmations</string>
+    <string name="topbar_settings_button">Settings Button</string>
+    <string name="share_button">Share</string>
+    <string name="settings_menu_heading">Settings</string>
+    <string name="settings_menu_back_button">Back button</string>
+    <string name="settings_menu_content">settings placeholder</string>
 </resources>

@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -39,33 +40,29 @@ fun SettingsPage(navController: NavHostController) {
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = RoundedCornerShape(22.dp)
                     ),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-                // val testVar = sharedPrefs.getString("user_name", "User") ?: "User"
                 FloatingActionButton(
                     onClick = {
                         navController.navigateUp()
                     },
                     modifier = Modifier
-                        .padding(5.dp),
+                        .padding(start = 5.dp, top = 5.dp, bottom = 5.dp),
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                     shape = RoundedCornerShape(22.dp)
                 ) {
-                    Icon(Icons.Outlined.ArrowBack, "Settings Icon")
-                }
-                /*
-                IconButton(onClick = {}) {
                     Icon(
-                        imageVector = Icons.Filled.AccountCircle,
-                        contentDescription = "Localized description",
-                        modifier = Modifier
-                            .size(36.dp),
-
+                        Icons.Outlined.ArrowBack,
+                        stringResource(R.string.settings_menu_back_button)
                     )
                 }
-                 */
+                Text(
+                    text = stringResource(R.string.settings_menu_heading),
+                    modifier = Modifier.padding(14.dp),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontFamily = HarmonyOS_Sans
+                )
             }
         }
         Column(
@@ -79,21 +76,12 @@ fun SettingsPage(navController: NavHostController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val dailyAffirmation = "settings placeholder"
             Text(
-                text = dailyAffirmation,
+                text = stringResource(id = R.string.settings_menu_content),
                 modifier = Modifier
                     .padding(start = 14.dp),
                 fontFamily = HarmonyOS_Sans,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-            )
-            Text(
-                text = "",
-                modifier = Modifier
-                    .padding(start = 14.dp),
-                fontFamily = HarmonyOS_Sans,
-                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
         }
