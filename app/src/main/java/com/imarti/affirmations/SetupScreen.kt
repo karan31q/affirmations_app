@@ -1,14 +1,15 @@
 package com.imarti.affirmations
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -69,25 +70,21 @@ fun SetupScreen(navController: NavHostController) {
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
         )
-        TextField(
+        OutlinedTextField(
+            modifier = Modifier.padding(14.dp),
             value = userName,
             onValueChange = {
                 userName = it
-                sharedPrefs.edit().putString("user_name", it).apply()
-                },
-            label = { Text(
-                "Name",
-                fontFamily = HarmonyOS_Sans
-            ) },
-            placeholder = { Text(
-                "",
-                fontFamily = HarmonyOS_Sans
-            ) },
-
+            },
         )
         Button(
             onClick = {
                 sharedPrefs.edit().putBoolean("first_launch", false).apply()
+                if (userName.isEmpty()) {
+                    userName = "User"
+                    Toast.makeText(context, R.string.empty_username_warning, Toast.LENGTH_SHORT).show()
+                }
+                sharedPrefs.edit().putString("user_name", userName).apply()
                 navController.navigate("main") {
                     popUpTo(navController.graph.startDestinationId) {
                         inclusive = true
