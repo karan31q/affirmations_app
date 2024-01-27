@@ -28,7 +28,7 @@ import com.imarti.affirmations.ui.theme.HarmonyOS_Sans
 fun AffirmationsPage(navController: NavHostController){
     // val context = LocalContext.current
     Column (
-        modifier = Modifier.padding(14.dp)
+        modifier = Modifier.padding(start = 14.dp, end = 14.dp, top = 14.dp)
     ) {
         Row(
             modifier = Modifier.padding(bottom = 14.dp)
@@ -78,6 +78,7 @@ fun AffirmationsPage(navController: NavHostController){
         }
         Column(
             modifier = Modifier
+                .padding(bottom = 2.dp)
                 .fillMaxSize()
                 .background(
                     color = MaterialTheme.colorScheme.secondaryContainer,
@@ -107,15 +108,10 @@ fun AffirmationsPage(navController: NavHostController){
     }
 }
 
-
-@Composable
-fun AffirmationsPagePreviewOnly() {
-    AffirmationsPage(navController = NavHostController(LocalContext.current)) // Provide a dummy navController
-}
 @Preview(showBackground = true)
 @Composable
 fun AffirmationsPagePreview() {
     AffirmationsTheme {
-        AffirmationsPagePreviewOnly() // Use a preview-specific composable
+        AffirmationsPage(navController = NavHostController(LocalContext.current))
     }
 }

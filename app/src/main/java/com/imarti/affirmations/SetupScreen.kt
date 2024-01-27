@@ -23,12 +23,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 import com.imarti.affirmations.ui.theme.HarmonyOS_Sans
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SetupScreen(onSetupComplete: () -> Unit) {
+fun SetupScreen(navController: NavHostController) {
     val context = LocalContext.current
     val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     var userName by rememberSaveable {
@@ -88,7 +89,14 @@ fun SetupScreen(onSetupComplete: () -> Unit) {
             modifier = Modifier.padding(14.dp)
         )
         Button(
-            onClick = onSetupComplete,
+            onClick = {
+                sharedPrefs.edit().putBoolean("first_launch", false).apply()
+                navController.navigate("main") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            },
             modifier = Modifier.padding(start = 14.dp)
         ) {
             Text(text = "Done")
@@ -101,6 +109,6 @@ fun SetupScreen(onSetupComplete: () -> Unit) {
 @Composable
 fun SetupScreenPreview() {
     AffirmationsTheme {
-        SetupScreen(onSetupComplete = {})
+        SetupScreen(navController = NavHostController(LocalContext.current))
     }
 }

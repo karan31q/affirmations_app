@@ -28,12 +28,9 @@ class MainActivity : ComponentActivity() {
                         navController,
                         startDestination = if (isFirstLaunch) "setup" else "main"
                     ) {
-                        composable("setup") { SetupScreen(onSetupComplete = {
-                            sharedPrefs.edit().putBoolean("first_launch", false).apply()
-                            navController.navigate("main")
-                        }) }
+                        composable("setup") { SetupScreen(navController) }
                         composable("main") { AffirmationsPage(navController) }
-                        composable("settings") { SettingsPage() }
+                        composable("settings") { SettingsPage(navController) }
                     }
                 }
             }
