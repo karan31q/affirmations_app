@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Affirmations</string>
     <string name="topbar_heading">Daily Affirmations</string>
+    <string name="setup_screen_text">"Welcome User!\nPlease update the following according to your preference"</string>
     <string name="topbar_settings_button">Settings Button</string>
     <string name="share_button">Share</string>
     <string name="settings_menu_heading">Settings</string>
@@ -8,5 +9,5 @@
     <string name="settings_menu_change_username">Username: </string>
     <string name="username_text_input">Username</string>
     <string name="save_changes_button">Save Changes</string>
-    <string name="empty_username_warning">No username entered, using default username</string>
+    <string name="empty_username_warning">No username entered\nUsing default username</string>
 </resources>
