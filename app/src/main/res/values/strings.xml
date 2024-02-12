@@ -10,4 +10,5 @@
     <string name="username_text_input">Username</string>
     <string name="save_changes_button">Save Changes</string>
     <string name="empty_username_warning">No username entered\nUsing default username</string>
+    <string name="refresh_affirmation">Refresh</string>
 </resources>

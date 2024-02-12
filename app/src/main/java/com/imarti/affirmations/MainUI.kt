@@ -33,27 +33,36 @@ import com.imarti.affirmations.fetch.AffirmationsApi
 import com.imarti.affirmations.fetch.FetchAffirmationsService
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 import com.imarti.affirmations.ui.theme.HarmonyOS_Sans
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 @Composable
 fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAffirmationsService){
     // val context = LocalContext.current
-
     var affirmation by remember { mutableStateOf("") }
     var affirmationSource by remember { mutableStateOf("") }
     var canFetchAffirmation by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
+
+    suspend fun fetchAffirmation(affirmationsApi: FetchAffirmationsService) {
         try {
             val response = affirmationsApi.getAffirmation()
-            affirmation = response
-            affirmationSource = ""
+            val affirmationJson = JSONObject(response)
+            affirmation = affirmationJson.getString("affirmation")
+            affirmationSource = affirmationJson.getString("author")
             canFetchAffirmation = true
         } catch (e: Exception) {
             // Handle error
             affirmation = "Error receiving affirmation,\nPlease check your internet connection"
-            affirmationSource = ""
+            affirmationSource = "Unknown"
             canFetchAffirmation = false
 
         }
+    }
+
+    LaunchedEffect(Unit) {
+        fetchAffirmation(affirmationsApi)
     }
     Column (
         modifier = Modifier.padding(start = 14.dp, end = 14.dp, top = 14.dp)
@@ -117,6 +126,20 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
+            val context = LocalContext.current
+            Button(
+                    onClick = {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            fetchAffirmation(affirmationsApi)
+                        }
+                    },
+                    modifier = Modifier.padding(top = 5.dp),
+            ) {
+                Text(
+                        text = stringResource(R.string.refresh_affirmation),
+                        fontFamily = HarmonyOS_Sans
+                )
+            }
             if (canFetchAffirmation) {
                 val sendIntent: Intent = Intent().apply {
                     action = Intent.ACTION_SEND
@@ -124,7 +147,6 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
                     type = "text/plain"
                 }
                 val shareIntent = Intent.createChooser(sendIntent, null)
-                val context = LocalContext.current
                 Button(
                         onClick = { context.startActivity(shareIntent) },
                         modifier = Modifier.padding(top = 5.dp),
