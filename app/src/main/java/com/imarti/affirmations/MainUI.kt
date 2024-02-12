@@ -1,5 +1,6 @@
 package com.imarti.affirmations
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,13 +39,20 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
     // val context = LocalContext.current
 
     var affirmation by remember { mutableStateOf("") }
+    var affirmationSource by remember { mutableStateOf("") }
+    var canFetchAffirmation by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        affirmation = try {
+        try {
             val response = affirmationsApi.getAffirmation()
-            response
+            affirmation = response
+            affirmationSource = ""
+            canFetchAffirmation = true
         } catch (e: Exception) {
             // Handle error
-            "Error receiving affirmation,\nPlease check your internet connection"
+            affirmation = "Error receiving affirmation,\nPlease check your internet connection"
+            affirmationSource = ""
+            canFetchAffirmation = false
+
         }
     }
     Column (
@@ -103,30 +112,29 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
             Text(
-                text = affirmation,
+                text = affirmationSource,
                 fontFamily = HarmonyOS_Sans,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
-            // share sheet (will add back after adding affirmations)
-            /*
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, "Placeholder")
-                type = "text/plain"
+            if (canFetchAffirmation) {
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, "$affirmation\n$affirmationSource")
+                    type = "text/plain"
+                }
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                val context = LocalContext.current
+                Button(
+                        onClick = { context.startActivity(shareIntent) },
+                        modifier = Modifier.padding(top = 5.dp),
+                ) {
+                    Text(
+                            text = stringResource(R.string.share_button),
+                            fontFamily = HarmonyOS_Sans
+                    )
+                }
             }
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            val context = LocalContext.current
-            Button(
-                onClick = { context.startActivity(shareIntent)},
-                modifier = Modifier.padding(top = 5.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.share_button),
-                    fontFamily = HarmonyOS_Sans
-                )
-            }
-             */
         }
     }
 }
