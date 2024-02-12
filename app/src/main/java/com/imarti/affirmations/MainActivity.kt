@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.imarti.affirmations.fetch.AffirmationsApi
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 
 class MainActivity : ComponentActivity() {
@@ -29,7 +30,7 @@ class MainActivity : ComponentActivity() {
                         startDestination = if (isFirstLaunch) "setup" else "main"
                     ) {
                         composable("setup") { SetupScreen(navController) }
-                        composable("main") { AffirmationsPage(navController) }
+                        composable("main") { AffirmationsPage(navController, AffirmationsApi.retrofitService) }
                         composable("settings") { SettingsPage(navController) }
                     }
                 }

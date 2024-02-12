@@ -15,6 +15,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -22,12 +27,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.imarti.affirmations.fetch.AffirmationsApi
+import com.imarti.affirmations.fetch.FetchAffirmationsService
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 import com.imarti.affirmations.ui.theme.HarmonyOS_Sans
 
 @Composable
-fun AffirmationsPage(navController: NavHostController){
+fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAffirmationsService){
     // val context = LocalContext.current
+
+    var affirmation by remember { mutableStateOf("") }
+    LaunchedEffect(Unit) {
+        affirmation = try {
+            val response = affirmationsApi.getAffirmation()
+            response
+        } catch (e: Exception) {
+            // Handle error
+            "Error receiving affirmation,\nPlease check your internet connection"
+        }
+    }
     Column (
         modifier = Modifier.padding(start = 14.dp, end = 14.dp, top = 14.dp)
     ) {
@@ -76,18 +94,16 @@ fun AffirmationsPage(navController: NavHostController){
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val dailyAffirmation = "placeholder"
             Text(
-                text = dailyAffirmation,
+                text = affirmation,
                 modifier = Modifier
                     .padding(top = 10.dp),
                 fontFamily = HarmonyOS_Sans,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
-            val affirmationSource = "source: someone"
             Text(
-                text = affirmationSource,
+                text = affirmation,
                 fontFamily = HarmonyOS_Sans,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -119,6 +135,6 @@ fun AffirmationsPage(navController: NavHostController){
 @Composable
 fun AffirmationsPagePreview() {
     AffirmationsTheme {
-        AffirmationsPage(navController = NavHostController(LocalContext.current))
+        AffirmationsPage(navController = NavHostController(LocalContext.current), affirmationsApi = AffirmationsApi.retrofitService)
     }
 }
