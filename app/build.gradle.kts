@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.imarti.affirmations"
-        minSdk = 32
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
