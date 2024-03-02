@@ -32,6 +32,7 @@ class MainActivity : ComponentActivity() {
                         composable("setup") { SetupScreen(navController) }
                         composable("main") { AffirmationsPage(navController, AffirmationsApi.retrofitService) }
                         composable("settings") { SettingsPage(navController) }
+                        composable("journal") { JournalPage(navController) }
                     }
                 }
             }
