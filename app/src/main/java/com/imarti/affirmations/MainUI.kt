@@ -1,29 +1,53 @@
 package com.imarti.affirmations
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Create
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -45,6 +69,7 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
     var affirmation by remember { mutableStateOf("") }
     var affirmationSource by remember { mutableStateOf("") }
     var canFetchAffirmation by remember { mutableStateOf(false) }
+    var journalPage by remember { mutableStateOf(false) }
 
     suspend fun fetchAffirmation(affirmationsApi: FetchAffirmationsService) {
         try {
@@ -52,11 +77,14 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
             val affirmationJson = JSONObject(response)
             affirmation = affirmationJson.getString("affirmation")
             affirmationSource = affirmationJson.getString("author")
+            if (affirmationSource == "Unknown") {
+                affirmationSource = ""
+            }
             canFetchAffirmation = true
         } catch (e: Exception) {
             // Handle error
             affirmation = "Error receiving affirmation,\nPlease check your internet connection"
-            affirmationSource = "Unknown"
+            affirmationSource = ""
             canFetchAffirmation = false
 
         }
@@ -65,44 +93,148 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
     LaunchedEffect(Unit) {
         fetchAffirmation(affirmationsApi)
     }
-    Column (
-        modifier = Modifier.padding(start = 14.dp, end = 14.dp, top = 14.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(bottom = 5.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = RoundedCornerShape(22.dp)
-                    ),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+
+    Scaffold(
+        modifier = Modifier
+            .statusBarsPadding(),
+        topBar = {
+             Card(
+                 modifier = Modifier
+                     .fillMaxWidth()
+                     .padding(top = 5.dp, start = 10.dp, end = 10.dp),
+                 colors = CardDefaults.cardColors(
+                     containerColor = MaterialTheme.colorScheme.surfaceVariant
+                 ),
+                 shape = CircleShape
+             ) {
+                 Row(
+                     modifier = Modifier
+                         .padding(5.dp)
+                         .fillMaxWidth(),
+                     verticalAlignment = Alignment.CenterVertically
+                 ) {
+                     IconButton(
+                         onClick = { navController.navigate("settings") },
+                         modifier = Modifier
+                             .clip(CircleShape)
+                             .background(MaterialTheme.colorScheme.surface)
+                     ) {
+                         Icon(
+                             Icons.Outlined.AccountCircle,
+                             stringResource(R.string.topbar_settings_button),
+                             tint = MaterialTheme.colorScheme.outline,
+                             modifier = Modifier.size(40.dp)
+                         )
+                     }
+                     Text(
+                         text = stringResource(R.string.topbar_heading),
+                         modifier = Modifier
+                             .padding(10.dp),
+                         style = MaterialTheme.typography.headlineMedium,
+                         fontFamily = HarmonyOS_Sans
+                     )
+                 }
+             }
+        },
+        bottomBar = {
+            var selectedItem by remember { mutableIntStateOf(0) }
+            val items = listOf("Affirmations", "Journal")
+            val itemsIcon = listOf(Icons.Outlined.Favorite, Icons.Outlined.Create)
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surface,
             ) {
-                // val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-                // val testVar = sharedPrefs.getString("user_name", "User") ?: "User"
-                Text(
-                    text = stringResource(R.string.topbar_heading),
-                    modifier = Modifier.padding(14.dp),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontFamily = HarmonyOS_Sans
-                )
-                FloatingActionButton(
-                    onClick = {
-                              navController.navigate("settings")
-                    },
-                    modifier = Modifier
-                        .padding(5.dp),
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    shape = RoundedCornerShape(22.dp)
+                items.forEachIndexed { index, item ->
+                    NavigationBarItem(
+                            selected = selectedItem == index,
+                            onClick = {
+                                selectedItem = index
+                                if (selectedItem == 1) {
+                                    journalPage = true
+                                } else {
+                                    journalPage = false
+                                }
+                            },
+                            icon = { Icon(itemsIcon[index], item) },
+                            label = { Text(
+                                item,
+                                fontFamily = HarmonyOS_Sans
+                            ) }
+                    )
+                }
+            }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { /*TODO*/ }
+
                 ) {
-                    Icon(Icons.Outlined.Settings, stringResource(R.string.topbar_settings_button))
+                Icon(
+                    Icons.Outlined.Add, "Add journal entry",
+                )
+            }
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .padding(start = 10.dp, end = 10.dp, top = 20.dp, bottom = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ){
+            if (journalPage) {
+                JournalPage()
+            } else {
+                Text(
+                    text = affirmation,
+                    fontFamily = HarmonyOS_Sans,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    textAlign = TextAlign.Justify,
+                    maxLines = 4
+                )
+                Text(
+                    text = affirmationSource,
+                    fontFamily = HarmonyOS_Sans,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                )
+                Button(
+                    onClick = {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            fetchAffirmation(affirmationsApi)
+                        }
+                    },
+                    modifier = Modifier.padding(top = 5.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.refresh_affirmation),
+                        fontFamily = HarmonyOS_Sans
+                    )
+                }
+                if (canFetchAffirmation) {
+                    val sendIntent: Intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, "$affirmation\nby: $affirmationSource")
+                        type = "text/plain"
+                    }
+                    val shareIntent = Intent.createChooser(sendIntent, null)
+                    Button(
+                        onClick = { context.startActivity(shareIntent) },
+                        modifier = Modifier.padding(top = 5.dp),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.share_button),
+                            fontFamily = HarmonyOS_Sans
+                        )
+                    }
                 }
             }
         }
+    }
+}
+
+/*
         Row (
             modifier = Modifier
                 .padding(bottom = 5.dp)
@@ -156,68 +288,7 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
             }
         }
 
-        Column(
-            modifier = Modifier
-                .padding(bottom = 2.dp)
-                .fillMaxSize()
-                .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = RoundedCornerShape(22.dp)
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-
-        ) {
-            Text(
-                text = affirmation,
-                modifier = Modifier
-                    .padding(top = 10.dp, start = 10.dp, end = 10.dp),
-                fontFamily = HarmonyOS_Sans,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                textAlign = TextAlign.Justify,
-                maxLines = 4
-            )
-            Text(
-                text = affirmationSource,
-                fontFamily = HarmonyOS_Sans,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-            )
-            Button(
-                    onClick = {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            fetchAffirmation(affirmationsApi)
-                        }
-                    },
-                    modifier = Modifier.padding(top = 5.dp),
-            ) {
-                Text(
-                        text = stringResource(R.string.refresh_affirmation),
-                        fontFamily = HarmonyOS_Sans
-                )
-            }
-            if (canFetchAffirmation) {
-                val sendIntent: Intent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, "$affirmation\n$affirmationSource")
-                    type = "text/plain"
-                }
-                val shareIntent = Intent.createChooser(sendIntent, null)
-                Button(
-                        onClick = { context.startActivity(shareIntent) },
-                        modifier = Modifier.padding(top = 5.dp),
-                ) {
-                    Text(
-                            text = stringResource(R.string.share_button),
-                            fontFamily = HarmonyOS_Sans
-                    )
-                }
-            }
-        }
-    }
-}
-
+ */
 @Preview(showBackground = true)
 @Composable
 fun AffirmationsPagePreview() {
