@@ -11,4 +11,8 @@
     <string name="save_changes_button">Save Changes</string>
     <string name="empty_username_warning">No username entered\nUsing default username</string>
     <string name="refresh_affirmation">Refresh</string>
+    <string name="got_it">Got it</string>
+    <string name="username_updated">Username updated</string>
+    <string name="restart_app_notification">Please restart app for changes to take effect</string>
+    <string name="restart_action">Restart</string>
 </resources>

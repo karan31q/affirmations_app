@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
         )
         super.onCreate(savedInstanceState)
         val sharedPrefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        val isFirstLaunch = sharedPrefs.getBoolean("first_launch", true)
+            val isFirstLaunch = sharedPrefs.getBoolean("first_launch", true)
         setContent {
             AffirmationsTheme {
                 Surface(

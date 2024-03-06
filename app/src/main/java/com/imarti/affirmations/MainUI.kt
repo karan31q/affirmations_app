@@ -1,43 +1,34 @@
 package com.imarti.affirmations
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Create
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.BottomAppBar
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -64,12 +56,20 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 @Composable
-fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAffirmationsService){
+fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAffirmationsService) {
+
     val context = LocalContext.current
     var affirmation by remember { mutableStateOf("") }
     var affirmationSource by remember { mutableStateOf("") }
     var canFetchAffirmation by remember { mutableStateOf(false) }
+    var selectedItem by remember { mutableIntStateOf(0) }
     var journalPage by remember { mutableStateOf(false) }
+
+    data class NavigationItems(
+        val title: String,
+        val selectedIcon: ImageVector,
+        val unSelectedIcon: ImageVector
+    )
 
     suspend fun fetchAffirmation(affirmationsApi: FetchAffirmationsService) {
         try {
@@ -82,7 +82,6 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
             }
             canFetchAffirmation = true
         } catch (e: Exception) {
-            // Handle error
             affirmation = "Error receiving affirmation,\nPlease check your internet connection"
             affirmationSource = ""
             canFetchAffirmation = false
@@ -137,9 +136,19 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
              }
         },
         bottomBar = {
-            var selectedItem by remember { mutableIntStateOf(0) }
-            val items = listOf("Affirmations", "Journal")
-            val itemsIcon = listOf(Icons.Outlined.Favorite, Icons.Outlined.Create)
+            val items = listOf(
+                NavigationItems(
+                    "Affirmations",
+                    Icons.Filled.Favorite,
+                    Icons.Outlined.FavoriteBorder
+                ),
+                NavigationItems(
+                    "Journal",
+                    Icons.Filled.Create,
+                    Icons.Outlined.Create
+
+                )
+            )
             NavigationBar(
                 containerColor = MaterialTheme.colorScheme.surface,
             ) {
@@ -154,23 +163,31 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
                                     journalPage = false
                                 }
                             },
-                            icon = { Icon(itemsIcon[index], item) },
-                            label = { Text(
-                                item,
-                                fontFamily = HarmonyOS_Sans
-                            ) }
+                            icon = {
+                                Icon(
+                                    if (selectedItem == index) item.selectedIcon else item.unSelectedIcon,
+                                    item.title
+                                )
+                            },
+                            label = {
+                                Text(
+                                    item.title,
+                                    fontFamily = HarmonyOS_Sans
+                                )
+                            }
                     )
                 }
             }
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /*TODO*/ }
-
+            if (journalPage) {
+                FloatingActionButton(
+                    onClick = { /*TODO*/ }
                 ) {
-                Icon(
-                    Icons.Outlined.Add, "Add journal entry",
-                )
+                    Icon(
+                        Icons.Outlined.Add, "Add journal entry",
+                    )
+                }
             }
         }
     ) { innerPadding ->
@@ -234,61 +251,6 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
     }
 }
 
-/*
-        Row (
-            modifier = Modifier
-                .padding(bottom = 5.dp)
-                .fillMaxWidth()
-        ) {
-            Row (
-                modifier = Modifier
-                    .padding(end = 5.dp)
-                    .weight(1f)
-            ) {
-                FloatingActionButton(
-                    onClick = {
-                    },
-                    modifier = Modifier
-                        .padding(5.dp),
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = RoundedCornerShape(22.dp)
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .fillMaxWidth(),
-                        text = "Affirmations",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-            Row (
-                modifier = Modifier
-                    .weight(1f)
-            ) {
-                FloatingActionButton(
-                    onClick = {
-                        navController.navigate("journal")
-                    },
-                    modifier = Modifier
-                        .padding(5.dp),
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    shape = RoundedCornerShape(22.dp)
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .fillMaxWidth(),
-                        text = "Journal",
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-        }
-
- */
 @Preview(showBackground = true)
 @Composable
 fun AffirmationsPagePreview() {
