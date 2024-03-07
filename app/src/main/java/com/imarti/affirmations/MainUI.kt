@@ -65,6 +65,9 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
     var selectedItem by remember { mutableIntStateOf(0) }
     var journalPage by remember { mutableStateOf(false) }
 
+    val errorAffirmationString = stringResource(R.string.error_affirmation)
+    val affirmationUnknownAuthor = stringResource(R.string.unknown)
+    
     data class NavigationItems(
         val title: String,
         val selectedIcon: ImageVector,
@@ -77,12 +80,12 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
             val affirmationJson = JSONObject(response)
             affirmation = affirmationJson.getString("affirmation")
             affirmationSource = affirmationJson.getString("author")
-            if (affirmationSource == "Unknown") {
+            if (affirmationSource == affirmationUnknownAuthor) {
                 affirmationSource = ""
             }
             canFetchAffirmation = true
         } catch (e: Exception) {
-            affirmation = "Error receiving affirmation,\nPlease check your internet connection"
+            affirmation = errorAffirmationString
             affirmationSource = ""
             canFetchAffirmation = false
 
@@ -185,7 +188,7 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
                     onClick = { /*TODO*/ }
                 ) {
                     Icon(
-                        Icons.Outlined.Add, "Add journal entry",
+                        Icons.Outlined.Add, stringResource(R.string.journal_entry_add),
                     )
                 }
             }

@@ -15,4 +15,14 @@
     <string name="username_updated">Username updated</string>
     <string name="restart_app_notification">Please restart app for changes to take effect</string>
     <string name="restart_action">Restart</string>
+    <string name="journal_entry_add">Add journal entry</string>
+    <string name="default_username">User</string>
+    <string name="user_icon_desc">User icon</string>
+    <string name="change_username">Change username</string>
+    <string name="confirm_text">Confirm</string>
+    <string name="dismiss_text">Dismiss</string>
+    <string name="reset_app">Reset app</string>
+    <string name="error_affirmation">Error receiving affirmation\nPlease check your internet connection</string>
+    <string name="unknown">Unknown</string>
+    <string name="enter_journal_entry">Enter your journal entry here</string>
 </resources>

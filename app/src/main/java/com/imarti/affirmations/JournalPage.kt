@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,10 +38,11 @@ import java.util.Locale
 fun JournalPage() {
 
     val context = LocalContext.current
+    val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+
     var journalEntryText by remember { mutableStateOf("") }
 
     fun saveJournalEntry(text: String) {
-        val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val entriesJson = sharedPrefs.getString("entries", "[]")
         val entriesArray = JSONArray(entriesJson)
         val entryObject = JSONObject().apply {
@@ -52,7 +54,6 @@ fun JournalPage() {
     }
 
     fun getJournalEntries(): List<JournalEntry> {
-        val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val entriesJson = sharedPrefs.getString("entries", "[]")
         val entriesArray = JSONArray(entriesJson)
         val entriesList = mutableListOf<JournalEntry>()
@@ -78,7 +79,11 @@ fun JournalPage() {
             onValueChange = { journalEntryText = it },
             modifier = Modifier.fillMaxWidth(),
             textStyle = TextStyle(fontFamily = HarmonyOS_Sans),
-            placeholder = { Text("Enter your journal entry here") }
+            placeholder = {
+                Text(
+                    text = stringResource(R.string.enter_journal_entry)
+                )
+            }
         )
         Button(
             onClick = {

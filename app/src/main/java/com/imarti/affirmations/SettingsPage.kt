@@ -2,12 +2,8 @@ package com.imarti.affirmations
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -78,6 +74,7 @@ fun SettingsPage(navController: NavHostController) {
     val savedUserName = stringResource(R.string.username_updated)
     val restartAppNotification = stringResource(R.string.restart_app_notification)
     val restartText = stringResource(R.string.restart_action)
+    val defaultUserName = stringResource(R.string.default_username)
 
     Scaffold(
         modifier = Modifier
@@ -90,7 +87,7 @@ fun SettingsPage(navController: NavHostController) {
                      titleContentColor = MaterialTheme.colorScheme.onSurface,
                  ),
                  title = { Text(
-                     text = "Settings",
+                     text = stringResource(R.string.settings_menu_heading),
                      maxLines = 1,
                      style = MaterialTheme.typography.headlineLarge
                  ) },
@@ -98,7 +95,7 @@ fun SettingsPage(navController: NavHostController) {
                      IconButton(onClick = { navController.navigateUp() }) {
                          Icon(
                              imageVector = Icons.Outlined.ArrowBack,
-                             contentDescription = "Go back"
+                             contentDescription = stringResource(R.string.settings_menu_back_button)
                          )
                      }
                  },
@@ -139,12 +136,14 @@ fun SettingsPage(navController: NavHostController) {
                         icon = {
                             Icon(
                                 Icons.Outlined.AccountCircle,
-                                contentDescription = "User icon",
+                                contentDescription = stringResource(R.string.user_icon_desc),
                                 modifier = Modifier.size(50.dp)
                             )
                         },
                         title = {
-                            Text(text = "Change username")
+                            Text(
+                                text = stringResource(R.string.change_username)
+                            )
                         },
                         text = {
                             TextField(
@@ -159,7 +158,7 @@ fun SettingsPage(navController: NavHostController) {
                             TextButton(
                                 onClick = {
                                     if (userName.isEmpty()) {
-                                        userName = "User"
+                                        userName = defaultUserName
                                         scope.launch {
                                             snackbarHostState.showSnackbar(
                                                     message = emptyUserNameWarning,
@@ -180,7 +179,9 @@ fun SettingsPage(navController: NavHostController) {
                                     showUserNameDialog.value = false
                                 }
                             ) {
-                                Text("Confirm")
+                                Text(
+                                    text = stringResource(R.string.confirm_text)
+                                )
                             }
                         },
                         dismissButton = {
@@ -189,7 +190,9 @@ fun SettingsPage(navController: NavHostController) {
                                     showUserNameDialog.value = false
                                 }
                             ) {
-                                Text("Dismiss")
+                                Text(
+                                    text = stringResource(R.string.dismiss_text)
+                                )
                             }
                         }
                     )
@@ -200,37 +203,6 @@ fun SettingsPage(navController: NavHostController) {
                     text = userName,
                     style = MaterialTheme.typography.titleLarge
                 )
-                /*
-                Row {
-                    Text(
-                        modifier = Modifier.padding(top = 15.dp),
-                        text = stringResource(id = R.string.settings_menu_change_username),
-                        fontFamily = HarmonyOS_Sans,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier.padding(start = 15.dp),
-                        value = userName,
-                        onValueChange = { userName = it },
-                    )
-                }
-                Button(
-                    onClick = {
-                        if (userName.isEmpty()) {
-                            userName = "User"
-                            Toast.makeText(context, R.string.empty_username_warning, Toast.LENGTH_SHORT).show()
-                        }
-                        sharedPrefs.edit().putString("user_name", userName).apply()
-                    },
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.save_changes_button),
-                        fontFamily = HarmonyOS_Sans
-
-                    )
-                }
-                 */
             }
             Button(
                 onClick = {
@@ -253,19 +225,12 @@ fun SettingsPage(navController: NavHostController) {
 
                 }
             ) {
-                Text("Reset app")
+                Text(
+                    text = stringResource(R.string.reset_app)
+                )
             }
         }
     }
-}
-
-fun Context.restart() {
-    val packageManager = packageManager
-    val intent = packageManager.getLaunchIntentForPackage(packageName)!!
-    val componentName = intent.component!!
-    val restartIntent = Intent.makeRestartActivityTask(componentName)
-    startActivity(restartIntent)
-    Runtime.getRuntime().exit(0)
 }
 
 @Preview(showBackground = true)
