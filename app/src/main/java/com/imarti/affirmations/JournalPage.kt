@@ -3,14 +3,19 @@ package com.imarti.affirmations
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -40,8 +45,6 @@ fun JournalPage() {
     val context = LocalContext.current
     val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
-    var journalEntryText by remember { mutableStateOf("") }
-
     fun saveJournalEntry(text: String) {
         val entriesJson = sharedPrefs.getString("entries", "[]")
         val entriesArray = JSONArray(entriesJson)
@@ -68,6 +71,43 @@ fun JournalPage() {
         }
         return entriesList
     }
+
+    fun deleteJournalEntry(index: Int) {
+        val entriesJson = sharedPrefs.getString("entries", "[]")
+        val entriesArray = JSONArray(entriesJson)
+        val entriesList = mutableListOf<JournalEntry>()
+
+        // Populate entriesList with existing entries
+        for (i in 0 until entriesArray.length()) {
+            val entryObject = entriesArray.getJSONObject(i)
+            entriesList.add(
+                JournalEntry(
+                    text = entryObject.getString("text"),
+                    dateTime = entryObject.getString("dateTime")
+                )
+            )
+        }
+
+        // Remove the entry at the specified index
+        if (index >= 0 && index < entriesList.size) {
+            entriesList.removeAt(index)
+        }
+
+        // Save the updated list back to SharedPreferences
+        val updatedEntriesJson = JSONArray()
+        for (entry in entriesList) {
+            val entryObject = JSONObject().apply {
+                put("text", entry.text)
+                put("dateTime", entry.dateTime)
+            }
+            updatedEntriesJson.put(entryObject)
+        }
+        sharedPrefs.edit().putString("entries", updatedEntriesJson.toString()).apply()
+    }
+
+    var journalEntries by remember { mutableStateOf(getJournalEntries().reversed()) }
+    var journalEntryText by remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,7 +121,8 @@ fun JournalPage() {
             textStyle = TextStyle(fontFamily = HarmonyOS_Sans),
             placeholder = {
                 Text(
-                    text = stringResource(R.string.enter_journal_entry)
+                    stringResource(R.string.enter_journal_entry),
+                    fontFamily = HarmonyOS_Sans
                 )
             }
         )
@@ -89,18 +130,22 @@ fun JournalPage() {
             onClick = {
                 saveJournalEntry(journalEntryText)
                 journalEntryText = "" // save the text and then clear the text field
+                // update entries after saving
+                journalEntries = getJournalEntries().reversed()
             },
             modifier = Modifier.align(Alignment.End)
         ) {
-            Text("Save")
+            Text(
+                text = stringResource(R.string.save),
+                fontFamily = HarmonyOS_Sans
+            )
         }
         
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            val journalEntries = getJournalEntries().reversed() // show from the latest to the oldest
-            journalEntries.forEach { entry ->
+            journalEntries.forEachIndexed { index, entry ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
@@ -110,12 +155,33 @@ fun JournalPage() {
                     ) {
                         Text(
                             entry.text,
-                            style = MaterialTheme.typography.headlineLarge
+                            style = MaterialTheme.typography.headlineLarge,
+                            modifier = Modifier.fillMaxWidth(),
+                            fontFamily = HarmonyOS_Sans
                         )
-                        Text(
-                            entry.dateTime,
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                entry.dateTime,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = HarmonyOS_Sans
+                            )
+                            IconButton(
+                                onClick = {
+                                    deleteJournalEntry(index)
+                                    // update entries after deleting
+                                    journalEntries = getJournalEntries().reversed()
+                                }
+                            ) {
+                                Icon(
+                                    Icons.Outlined.Delete,
+                                    stringResource(R.string.delete_journal)
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -129,6 +195,43 @@ data class JournalEntry(
     val dateTime: String
 )
 
+@Preview(showBackground = true)
+@Composable
+fun JournalCardView() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                "Journal",
+                style = MaterialTheme.typography.headlineLarge,
+                modifier = Modifier.fillMaxWidth(),
+                fontFamily = HarmonyOS_Sans
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    "01/03/2024, 12:00",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        Icons.Outlined.Delete,
+                        "Delete Journal Entry"
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Preview(showBackground = true)
 @Composable

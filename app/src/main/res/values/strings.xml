@@ -25,4 +25,6 @@
     <string name="error_affirmation">Error receiving affirmation\nPlease check your internet connection</string>
     <string name="unknown">Unknown</string>
     <string name="enter_journal_entry">Enter your journal entry here</string>
+    <string name="delete_journal">Delete Journal Entry</string>
+    <string name="save">Save</string>
 </resources>
