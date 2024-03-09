@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,11 +60,14 @@ import org.json.JSONObject
 fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAffirmationsService) {
 
     val context = LocalContext.current
+
     var affirmation by remember { mutableStateOf("") }
     var affirmationSource by remember { mutableStateOf("") }
     var canFetchAffirmation by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableIntStateOf(0) }
     var journalPage by remember { mutableStateOf(false) }
+
+    val coroutineScope = rememberCoroutineScope()
 
     val errorAffirmationString = stringResource(R.string.error_affirmation)
     val affirmationUnknownAuthor = stringResource(R.string.unknown)
@@ -93,7 +97,9 @@ fun AffirmationsPage(navController: NavHostController, affirmationsApi: FetchAff
     }
 
     LaunchedEffect(Unit) {
-        fetchAffirmation(affirmationsApi)
+        coroutineScope.launch {
+            fetchAffirmation(affirmationsApi)
+        }
     }
 
     Scaffold(
