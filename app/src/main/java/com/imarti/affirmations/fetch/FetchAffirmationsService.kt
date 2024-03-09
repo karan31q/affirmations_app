@@ -6,7 +6,7 @@ import retrofit2.http.GET
 
 
 private const val BASE_URL =
-    "http://imarti.cloud:5999"
+    "https://karan31q.pythonanywhere.com"
 
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(ScalarsConverterFactory.create())
