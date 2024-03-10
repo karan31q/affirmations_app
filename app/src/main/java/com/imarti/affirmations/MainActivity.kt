@@ -1,5 +1,7 @@
 package com.imarti.affirmations
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -24,6 +26,7 @@ class MainActivity : ComponentActivity() {
                 Color.Transparent.toArgb(), Color.Transparent.toArgb()
             )
         )
+        createNotificationChannel()
         super.onCreate(savedInstanceState)
         val sharedPrefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
             val isFirstLaunch = sharedPrefs.getBoolean("first_launch", true)
@@ -45,5 +48,17 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun createNotificationChannel() {
+        val name = "Affirmation Reminder"
+        val descriptionText = "Channel for Alarm Manager"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel("Affirmations", name, importance)
+        channel.description = descriptionText
+
+        val notificationManager = getSystemService(NotificationManager::class.java)
+
+        notificationManager.createNotificationChannel(channel)
     }
 }

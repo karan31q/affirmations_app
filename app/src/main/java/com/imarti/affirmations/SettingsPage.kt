@@ -1,6 +1,9 @@
 package com.imarti.affirmations
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -55,12 +58,15 @@ import com.maxkeppeler.sheets.clock.models.ClockConfig
 import com.maxkeppeler.sheets.clock.models.ClockSelection
 import kotlinx.coroutines.launch
 import java.time.LocalTime
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsPage(navController: NavHostController) {
 
     val context = LocalContext.current
+    var alarmManager: AlarmManager
+    var pendingIntent: PendingIntent
 
     val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     var userName by rememberSaveable {
@@ -95,6 +101,46 @@ fun SettingsPage(navController: NavHostController) {
     // val restartAppNotification = stringResource(R.string.restart_app_notification)
     // val restartText = stringResource(R.string.restart_action)
     val defaultUserName = stringResource(R.string.default_username)
+
+
+    val calendar = Calendar.getInstance()
+    calendar[Calendar.HOUR_OF_DAY] = hourMinutesSelected.hour
+    calendar[Calendar.MINUTE] = hourMinutesSelected.minute
+    calendar[Calendar.SECOND] = 0
+    calendar[Calendar.MILLISECOND] = 0
+
+    fun setAlarm() {
+        alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmReceiver::class.java)
+        pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY, pendingIntent
+        )
+        scope.launch {
+            snackbarHostState.showSnackbar(
+                message = "Alarm set for $hourMinutesSelected every day",
+                actionLabel = okLabel,
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
+
+    fun cancelAlarm(showSnackBar: Boolean) {
+        alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmReceiver::class.java)
+        pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        alarmManager.cancel(pendingIntent)
+        if (showSnackBar) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = "Alarm cancelled",
+                    actionLabel = okLabel,
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }
+    }
 
     Scaffold(
         modifier = Modifier
@@ -237,14 +283,8 @@ fun SettingsPage(navController: NavHostController) {
                     hourSelected = hours
                     minutesSelected = minutes
                     hourMinutesSelected = LocalTime.of(hourSelected, minutesSelected)
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = "Selected time is $hourMinutesSelected",
-                            actionLabel = okLabel,
-                            duration = SnackbarDuration.Short
-                        )
-                    }
-
+                    cancelAlarm(showSnackBar = false) // first cancel old alarm
+                    setAlarm()
                 }
             )
 
@@ -275,6 +315,7 @@ fun SettingsPage(navController: NavHostController) {
                     )
                 }
             }
+
             /*
             Button(
                 onClick = {
