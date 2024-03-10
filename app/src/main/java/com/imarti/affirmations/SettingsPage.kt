@@ -112,6 +112,7 @@ fun SettingsPage(navController: NavHostController) {
     fun setAlarm() {
         alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
+        intent.action = "com.imarti.affirmations.ACTION_SET_ALARM"
         pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
@@ -129,6 +130,7 @@ fun SettingsPage(navController: NavHostController) {
     fun cancelAlarm(showSnackBar: Boolean) {
         alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
+        intent.action = "com.imarti.affirmations.ACTION_CANCEL_ALARM"
         pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         alarmManager.cancel(pendingIntent)
         if (showSnackBar) {
