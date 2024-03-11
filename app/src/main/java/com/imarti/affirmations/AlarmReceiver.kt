@@ -28,7 +28,7 @@ class AlarmReceiver: BroadcastReceiver() {
 
             val builder = NotificationCompat.Builder(
                 context, context.getString(R.string.notification_channel_id))
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.notification_icon)
                 .setContentTitle(context.getString(R.string.notification_channel_id))
                 .setContentText(context.getString(R.string.notification_content))
                 .setStyle(NotificationCompat.BigTextStyle()
