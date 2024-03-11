@@ -1,5 +1,8 @@
 package com.imarti.affirmations
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -17,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.imarti.affirmations.fetch.AffirmationsApi
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge(
@@ -24,6 +28,7 @@ class MainActivity : ComponentActivity() {
                 Color.Transparent.toArgb(), Color.Transparent.toArgb()
             )
         )
+        createNotificationChannel(this)
         super.onCreate(savedInstanceState)
         val sharedPrefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
             val isFirstLaunch = sharedPrefs.getBoolean("first_launch", true)
@@ -45,5 +50,18 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun createNotificationChannel(context: Context) {
+        val name = context.getString(R.string.notification_channel_id)
+        val descriptionText = context.getString(R.string.notification_channel_desc)
+        val channel = NotificationChannel(
+            name, name, NotificationManager.IMPORTANCE_DEFAULT // id , visible name, importance
+        )
+
+        channel.description = descriptionText
+
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
     }
 }
