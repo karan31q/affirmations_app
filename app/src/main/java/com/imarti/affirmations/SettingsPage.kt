@@ -1,12 +1,10 @@
 package com.imarti.affirmations
 
 import android.Manifest
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -60,6 +58,7 @@ import com.maxkeppeler.sheets.clock.ClockDialog
 import com.maxkeppeler.sheets.clock.models.ClockConfig
 import com.maxkeppeler.sheets.clock.models.ClockSelection
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,8 +66,6 @@ import java.util.Calendar
 fun SettingsPage(navController: NavHostController) {
 
     val context = LocalContext.current
-    var alarmManager: AlarmManager
-    var pendingIntent: PendingIntent
 
     val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     var userName by rememberSaveable {
@@ -96,25 +93,8 @@ fun SettingsPage(navController: NavHostController) {
     val alarmSetMessage = "Reminder set successfully"
     val alarmCancelledMessage = "Reminder cancelled"
 
-    val calendar = Calendar.getInstance()
-
-    fun setAlarm(calendar: Calendar) {
-        alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReceiver::class.java)
-        intent.action = "com.imarti.affirmations.ACTION_SET_ALARM"
-        pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            alarmManager.setInexactRepeating(
-                AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
-                AlarmManager.INTERVAL_DAY, pendingIntent
-            )
-        } else {
-            alarmManager.setRepeating(
-                AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
-                AlarmManager.INTERVAL_DAY, pendingIntent
-            )
-        }
-
+    fun setAlarmSnackbar(calendar: Calendar, context: Context) {
+        setAlarm(calendar, context)
 
         // show a snackbar
         scope.launch {
@@ -126,14 +106,9 @@ fun SettingsPage(navController: NavHostController) {
         }
     }
 
-    fun cancelAlarm(showSnackBar: Boolean) {
+    fun cancelAlarmSnackbar(showSnackBar: Boolean, context: Context) {
 
-        // cancel alarm
-        alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReceiver::class.java)
-        intent.action = "com.imarti.affirmations.ACTION_CANCEL_ALARM"
-        pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-        alarmManager.cancel(pendingIntent)
+        cancelAlarm(context)
 
         // only show a snackbar when a user cancels manually TODO - add a button for same
         if (showSnackBar) {
@@ -279,19 +254,13 @@ fun SettingsPage(navController: NavHostController) {
             ClockDialog(
                 state = clockState,
                 config = ClockConfig(
-                    is24HourFormat = true
+                    is24HourFormat = false
                 ),
                 selection = ClockSelection.HoursMinutes { hours, minutes ->
+                    sharedPrefs.edit().putBoolean("alarm_set", true).apply()
                     sharedPrefs.edit().putInt("hour_selected", hours).apply()
                     sharedPrefs.edit().putInt("minute_selected", minutes).apply()
-
-                    // get user specified time
-                    calendar[Calendar.HOUR_OF_DAY] = hours
-                    calendar[Calendar.MINUTE] = minutes
-                    calendar[Calendar.SECOND] = 0
-                    calendar[Calendar.MILLISECOND] = 0
-
-                    cancelAlarm(showSnackBar = false) // first cancel old alarm
+                    cancelAlarmSnackbar(showSnackBar = false, context) // first cancel old alarm
                     if (ActivityCompat.checkSelfPermission(
                             context,
                             Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -302,7 +271,28 @@ fun SettingsPage(navController: NavHostController) {
                             )
                         }
                     }
-                    setAlarm(calendar)
+
+                    // get user specified time
+                    val now = Calendar.getInstance()
+                    now[Calendar.HOUR_OF_DAY] = LocalDateTime.now().hour
+                    now[Calendar.MINUTE] = LocalDateTime.now().minute
+                    now[Calendar.SECOND] = 0
+                    now[Calendar.MILLISECOND] = 0
+
+                    val calendar = Calendar.getInstance()
+                    calendar[Calendar.HOUR_OF_DAY] = hours
+                    calendar[Calendar.MINUTE] = minutes
+                    calendar[Calendar.SECOND] = 0
+                    calendar[Calendar.MILLISECOND] = 0
+
+                    /*
+                    check if the time has already passed today and add a day if it that's the case
+                    */
+                    if (now.after(calendar)) {
+                        Log.i(tag,"Added a day")
+                        calendar.add(Calendar.DATE, 1)
+                    }
+                    setAlarmSnackbar(calendar, context)
                 }
             )
 
@@ -333,7 +323,6 @@ fun SettingsPage(navController: NavHostController) {
                     )
                 }
             }
-
             /*
             Button(
                 onClick = {

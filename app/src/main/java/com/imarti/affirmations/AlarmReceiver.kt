@@ -1,56 +1,53 @@
 package com.imarti.affirmations
 
-import android.Manifest
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.util.Log
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
+import java.time.LocalDateTime
+import java.util.Calendar
 
 
 class AlarmReceiver: BroadcastReceiver() {
-
     override fun onReceive(context: Context, intent: Intent) {
         val tag = "DailyAffirmations"
         val action = intent.action
-        if (action == "android.intent.action.BOOT_COMPLETED") {
-            Log.i(tag, "Received boot intent, daily affirmations active!")
+        val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val alarmSet = sharedPrefs.getBoolean("alarm_set", false) // false is default value
+
+        if (action != null && action == "android.intent.action.BOOT_COMPLETED") {
+            Log.i(tag, "Received boot intent")
+            if (alarmSet) {
+                val selectedHour = sharedPrefs.getInt("hour_selected", 8)
+                val selectedMinute = sharedPrefs.getInt("minute_selected", 30)
+
+                // get user specified
+                val now = Calendar.getInstance()
+                now[Calendar.HOUR_OF_DAY] = LocalDateTime.now().hour
+                now[Calendar.MINUTE] = LocalDateTime.now().minute
+                now[Calendar.SECOND] = 0
+                now[Calendar.MILLISECOND] = 0
+
+                val calendar = Calendar.getInstance()
+                calendar[Calendar.HOUR_OF_DAY] = selectedHour
+                calendar[Calendar.MINUTE] = selectedMinute
+                calendar[Calendar.SECOND] = 0
+                calendar[Calendar.MILLISECOND] = 0
+
+                /*
+                check if the time has already passed today and add a day if it that's the case
+                */
+                if (now.after(calendar)) {
+                    Log.i(tag,"Added a day.")
+                    calendar.add(Calendar.DATE, 1)
+                }
+                setAlarm(calendar, context)
+            } else {
+                Log.i(tag, "Alarms not set")
+            }
         } else if (action != null && (action == "com.imarti.affirmations.ACTION_SET_ALARM" ||
                     action == "com.imarti.affirmations.ACTION_CANCEL_ALARM")) {
-            val i = Intent(context, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            val pendingIntent = PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_IMMUTABLE)
-
-            val builder = NotificationCompat.Builder(
-                context, context.getString(R.string.notification_channel_id))
-                .setSmallIcon(R.drawable.notification_icon)
-                .setContentTitle(context.getString(R.string.notification_channel_id))
-                .setContentText(context.getString(R.string.notification_content))
-                .setStyle(NotificationCompat.BigTextStyle()
-                    .bigText(context.getString(R.string.notification_content_expanded)))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent)
-
-            val notificationManager = NotificationManagerCompat.from(context)
-            if (ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    ActivityCompat.requestPermissions(context as MainActivity,
-                        arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                        1
-                    )
-                }
-            }
-            Log.i(tag, "Alarm triggered, notifiying user")
-            notificationManager.notify(1, builder.build())
+            notificationBuilder(context)
         } else {
             Log.i(tag,"Received unexpected action $action")
         }
