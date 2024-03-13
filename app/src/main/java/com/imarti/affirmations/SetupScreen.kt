@@ -14,10 +14,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -30,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 import com.imarti.affirmations.ui.theme.HarmonyOS_Sans
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -40,20 +46,19 @@ fun SetupScreen(navController: NavHostController) {
         mutableStateOf(sharedPrefs.getString("user_name", "") ?: "User")
     }
 
-    /*
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-     */
+
+    // so it can be used with coroutines
+    val emptyUserNameWarning = stringResource(R.string.empty_username_warning)
+    val dismissLabel = stringResource(R.string.dismiss_text)
 
     Scaffold(
         modifier = Modifier
             .statusBarsPadding(),
-
-        /*
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         }
-         */
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -86,30 +91,15 @@ fun SetupScreen(navController: NavHostController) {
                 ),
                 onClick = {
                     sharedPrefs.edit().putBoolean("first_launch", false).apply()
-                    // will add later
-                    /*
                     if (userName.isEmpty()) {
                         userName = "User"
                         scope.launch {
                             snackbarHostState.showSnackbar(
                                 message = emptyUserNameWarning,
-                                actionLabel = okLabel,
+                                actionLabel = dismissLabel,
                                 duration = SnackbarDuration.Short
                             )
                         }
-                    } else {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = savedUserName,
-                                actionLabel = okLabel,
-                                duration = SnackbarDuration.Short
-                            )
-                        }
-                    }
-                     */
-                    if (userName.isEmpty()) {
-                        userName = "User"
-                        Toast.makeText(context, R.string.empty_username_warning, Toast.LENGTH_SHORT).show()
                     }
                     sharedPrefs.edit().putString("user_name", userName).apply()
                     navController.navigate("main") {
@@ -120,7 +110,7 @@ fun SetupScreen(navController: NavHostController) {
                 },
             ) {
                 Text(
-                    text = "Done",
+                    text = stringResource(R.string.done),
                     fontFamily = HarmonyOS_Sans
 
                 )

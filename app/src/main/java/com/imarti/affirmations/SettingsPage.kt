@@ -1,15 +1,14 @@
 package com.imarti.affirmations
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,7 +17,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -81,17 +83,17 @@ fun SettingsPage(navController: NavHostController) {
     val clockState = rememberUseCaseState()
 
     // https://stackoverflow.com/questions/67401294/jetpack-compose-close-application-by-button
-    // val activity = (LocalContext.current as? Activity)
+    val activity = (LocalContext.current as? Activity)
 
     // so it can be used with coroutines
     val emptyUserNameWarning = stringResource(R.string.empty_username_warning)
     val okLabel = stringResource(R.string.got_it)
     val savedUserName = stringResource(R.string.username_updated)
-    // val restartAppNotification = stringResource(R.string.restart_app_notification)
-    // val restartText = stringResource(R.string.restart_action)
+    val restartAppNotification = stringResource(R.string.restart_app_notification)
+    val restartText = stringResource(R.string.restart_action)
     val defaultUserName = stringResource(R.string.default_username)
-    val alarmSetMessage = "Reminder set successfully"
-    val alarmCancelledMessage = "Reminder cancelled"
+    val alarmSetMessage = stringResource(R.string.reminder_set)
+    val alarmCancelledMessage = stringResource(R.string.reminder_cancelled)
 
     fun setAlarmSnackbar(calendar: Calendar, context: Context) {
         setAlarm(calendar, context)
@@ -110,7 +112,7 @@ fun SettingsPage(navController: NavHostController) {
 
         cancelAlarm(context)
 
-        // only show a snackbar when a user cancels manually TODO - add a button for same
+        // only show a snackbar when a user cancels manually
         if (showSnackBar) {
             scope.launch {
                 snackbarHostState.showSnackbar(
@@ -296,10 +298,9 @@ fun SettingsPage(navController: NavHostController) {
                 }
             )
 
-            Row(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalAlignment = Alignment.CenterHorizontally
             ){
                 TextButton(
                     colors = ButtonColors(
@@ -309,48 +310,90 @@ fun SettingsPage(navController: NavHostController) {
                         disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                     ),
                     contentPadding = PaddingValues(15.dp),
-                    onClick = { clockState.show() }
+                    onClick = { clockState.show() },
+                    modifier = Modifier.padding(bottom = 5.dp)
                 ) {
                     Icon(
                         Icons.Outlined.Notifications,
-                        contentDescription = "Select time for daily notifications",
+                        contentDescription = stringResource(R.string.select_time_notifications),
                     )
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 10.dp),
-                        text = "Select Time for Daily Notifications",
+                        text = stringResource(R.string.select_time_notifications)
+                    )
+                }
+                TextButton(
+                    colors = ButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    ),
+                    contentPadding = PaddingValues(15.dp),
+                    onClick = { cancelAlarmSnackbar(showSnackBar = true, context) },
+                    modifier = Modifier.padding(bottom = 5.dp)
+                ) {
+                    Icon(
+                        Icons.Outlined.Close,
+                        contentDescription = stringResource(R.string.cancel_notifications),
+                    )
+                    Text(
+                        text = stringResource(R.string.cancel_notifications),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 10.dp),
+                    )
+                }
+                TextButton(
+                    colors = ButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    ),
+                    contentPadding = PaddingValues(15.dp),
+                    onClick = {
+                        // reset every shared prefs to default
+                        sharedPrefs.edit().putString("user_name", "").apply()
+                        sharedPrefs.edit().putBoolean("first_launch", true).apply()
+                        sharedPrefs.edit().putInt("hour_selected", 8).apply()
+                        sharedPrefs.edit().putInt("minute_selected", 30).apply()
+                        sharedPrefs.edit().putBoolean("alarm_set", false).apply()
+                        sharedPrefs.edit().putString("entries", "[]").apply()
+                        cancelAlarmSnackbar(showSnackBar = false, context)
+
+                        // show a snackbar for same
+                        scope.launch {
+                            val result = snackbarHostState
+                                .showSnackbar(
+                                    message = restartAppNotification,
+                                    actionLabel = restartText,
+                                    duration = SnackbarDuration.Short
+                                )
+                            when (result) {
+                                SnackbarResult.ActionPerformed -> {
+                                    activity?.finish()
+                                }
+                                SnackbarResult.Dismissed -> TODO()
+                            }
+                        }
+                    },
+                    modifier = Modifier.padding(bottom = 5.dp)
+                ) {
+                    Icon(
+                        Icons.Outlined.Refresh,
+                        contentDescription = stringResource(R.string.reset_app)
+                    )
+                    Text(
+                        text = stringResource(R.string.reset_app),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 10.dp),
                     )
                 }
             }
-            /*
-            Button(
-                onClick = {
-                    sharedPrefs.edit().putString("user_name", "").apply()
-                    sharedPrefs.edit().putBoolean("first_launch", true).apply()
-                    sharedPrefs.edit().putInt("hour_selected", 12).apply()
-                    scope.launch {
-                        val result = snackbarHostState
-                            .showSnackbar(
-                                message = restartAppNotification,
-                                actionLabel = restartText,
-                                duration = SnackbarDuration.Short
-                            )
-                        when (result) {
-                            SnackbarResult.ActionPerformed -> {
-                                activity?.finish()
-                            }
-                            SnackbarResult.Dismissed -> TODO()
-                        }
-                    }
-
-                }
-            ) {
-                Text(
-                    text = stringResource(R.string.reset_app)
-                )
-            }
-            */
         }
     }
 }

@@ -6,9 +6,6 @@
     <string name="share_button">Share</string>
     <string name="settings_menu_heading">Settings</string>
     <string name="settings_menu_back_button">Back button</string>
-    <string name="settings_menu_change_username">Username: </string>
-    <string name="username_text_input">Username</string>
-    <string name="save_changes_button">Save Changes</string>
     <string name="empty_username_warning">No username entered\nUsing default username</string>
     <string name="refresh_affirmation">Refresh</string>
     <string name="got_it">Got it</string>
@@ -31,4 +28,9 @@
     <string name="notification_content">Your daily reminder to check on affirmations…</string>
     <string name="notification_content_expanded">Your daily reminder to check on affirmations and fill out your journal!</string>
     <string name="notification_channel_desc">To display reminders about affirmations and journal</string>
+    <string name="reminder_set">Reminder set successfully</string>
+    <string name="reminder_cancelled">Reminder cancelled</string>
+    <string name="select_time_notifications">Select time for daily notifications</string>
+    <string name="cancel_notifications">Cancel repeating notifications</string>
+    <string name="done">Done</string>
 </resources>
