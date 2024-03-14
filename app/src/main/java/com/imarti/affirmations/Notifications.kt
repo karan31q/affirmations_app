@@ -49,15 +49,19 @@ fun notificationBuilder(context: Context) {
     val intent = Intent(context, MainActivity::class.java)
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
     val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+    val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    val userName = sharedPrefs.getString("user_name", "User")
 
+    val notificationText = context.getString(R.string.notification_content, userName)
+    val notificationTextExpanded = context.getString(R.string.notification_content_expanded, userName)
     val builder = NotificationCompat.Builder(
         context, context.getString(R.string.notification_channel_id))
         .setSmallIcon(R.drawable.notification_icon)
         .setContentTitle(context.getString(R.string.notification_channel_id))
-        .setContentText(context.getString(R.string.notification_content))
+        .setContentText(notificationText)
         .setStyle(
             NotificationCompat.BigTextStyle()
-            .bigText(context.getString(R.string.notification_content_expanded)))
+            .bigText(notificationTextExpanded))
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .setContentIntent(pendingIntent)
 

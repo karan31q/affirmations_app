@@ -25,8 +25,8 @@
     <string name="delete_journal">Delete Journal Entry</string>
     <string name="save">Save</string>
     <string name="notification_channel_id">Daily Affirmations</string>
-    <string name="notification_content">Your daily reminder to check on affirmations…</string>
-    <string name="notification_content_expanded">Your daily reminder to check on affirmations and fill out your journal!</string>
+    <string name="notification_content">Hey %s! time to check on daily affirmation…</string>
+    <string name="notification_content_expanded">Hey %s! time to check on daily affirmations and fill out your journal!</string>
     <string name="notification_channel_desc">To display reminders about affirmations and journal</string>
     <string name="reminder_set">Reminder set successfully</string>
     <string name="reminder_cancelled">Reminder cancelled</string>
