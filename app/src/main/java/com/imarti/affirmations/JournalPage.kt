@@ -50,7 +50,7 @@ fun JournalPage() {
         val entriesArray = JSONArray(entriesJson)
         val entryObject = JSONObject().apply {
             put("text", text)
-            put("dateTime", SimpleDateFormat("dd/mm/yy, HH:mm", Locale.getDefault()).format(Date()))
+            put("dateTime", SimpleDateFormat("dd/MM/yy, HH:mm", Locale.getDefault()).format(Date()))
         }
         entriesArray.put(entryObject)
         sharedPrefs.edit().putString("entries", entriesArray.toString()).apply()
@@ -60,7 +60,7 @@ fun JournalPage() {
         val entriesJson = sharedPrefs.getString("entries", "[]")
         val entriesArray = JSONArray(entriesJson)
         val entriesList = mutableListOf<JournalEntry>()
-        for (i in 0 until entriesArray.length()) {
+        for (i in entriesArray.length() -1 downTo 0) {
             val entryObject = entriesArray.getJSONObject(i)
             entriesList.add(
                 JournalEntry(
@@ -78,7 +78,7 @@ fun JournalPage() {
         val entriesList = mutableListOf<JournalEntry>()
 
         // Populate entriesList with existing entries
-        for (i in 0 until entriesArray.length()) {
+        for (i in entriesArray.length() -1 downTo 0) {
             val entryObject = entriesArray.getJSONObject(i)
             entriesList.add(
                 JournalEntry(
@@ -105,7 +105,7 @@ fun JournalPage() {
         sharedPrefs.edit().putString("entries", updatedEntriesJson.toString()).apply()
     }
 
-    var journalEntries by remember { mutableStateOf(getJournalEntries().reversed()) }
+    var journalEntries by remember { mutableStateOf(getJournalEntries()) }
     var journalEntryText by remember { mutableStateOf("") }
 
     Column(
@@ -131,7 +131,7 @@ fun JournalPage() {
                 saveJournalEntry(journalEntryText)
                 journalEntryText = "" // save the text and then clear the text field
                 // update entries after saving
-                journalEntries = getJournalEntries().reversed()
+                journalEntries = getJournalEntries()
             },
             modifier = Modifier.align(Alignment.End)
         ) {
@@ -173,7 +173,7 @@ fun JournalPage() {
                                 onClick = {
                                     deleteJournalEntry(index)
                                     // update entries after deleting
-                                    journalEntries = getJournalEntries().reversed()
+                                    journalEntries = getJournalEntries()
                                 }
                             ) {
                                 Icon(
