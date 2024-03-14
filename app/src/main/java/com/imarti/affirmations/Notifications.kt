@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.imarti.affirmations.alarm.AlarmReceiver
 import java.util.Calendar
 
 const val tag = "DailyAffirmations"

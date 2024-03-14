@@ -19,7 +19,7 @@
         <!--android:usesCleartextTraffic="true"
         android:networkSecurityConfig="@xml/network_security_config"-->
         <receiver
-            android:name=".AlarmReceiver"
+            android:name=".alarm.AlarmReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
