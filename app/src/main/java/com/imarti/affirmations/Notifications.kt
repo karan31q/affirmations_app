@@ -17,10 +17,14 @@ import java.util.Calendar
 const val tag = "DailyAffirmations"
 
 fun setAlarm(calendar: Calendar, context: Context) {
+    val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     val intent = Intent(context, AlarmReceiver::class.java)
+
     intent.action = "com.imarti.affirmations.ACTION_SET_ALARM"
-    val pendingIntent: PendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+    val pendingIntent: PendingIntent =
+        PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
@@ -33,16 +37,24 @@ fun setAlarm(calendar: Calendar, context: Context) {
         )
     }
 
-    Log.i(tag, "Notification scheduled for ${calendar[Calendar.HOUR_OF_DAY]}:${calendar[Calendar.MINUTE]} daily")
+    sharedPrefs.edit().putBoolean("alarm_set", true).apply()
+    Log.i(
+        tag,
+        "Notification scheduled for ${calendar[Calendar.HOUR_OF_DAY]}:${calendar[Calendar.MINUTE]} daily"
+    )
 }
 
 fun cancelAlarm(context: Context) {
+    val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     val intent = Intent(context, AlarmReceiver::class.java)
+
     intent.action = "com.imarti.affirmations.ACTION_CANCEL_ALARM"
-    val pendingIntent: PendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+    val pendingIntent: PendingIntent =
+        PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
     alarmManager.cancel(pendingIntent)
 
+    sharedPrefs.edit().putBoolean("alarm_set", false).apply()
     Log.i(tag, "Notifications cancelled")
 }
 
@@ -50,19 +62,23 @@ fun notificationBuilder(context: Context) {
     val intent = Intent(context, MainActivity::class.java)
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
     val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
     val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     val userName = sharedPrefs.getString("user_name", "User")
 
     val notificationText = context.getString(R.string.notification_content, userName)
-    val notificationTextExpanded = context.getString(R.string.notification_content_expanded, userName)
+    val notificationTextExpanded =
+        context.getString(R.string.notification_content_expanded, userName)
     val builder = NotificationCompat.Builder(
-        context, context.getString(R.string.notification_channel_id))
+        context, context.getString(R.string.notification_channel_id)
+    )
         .setSmallIcon(R.drawable.notification_icon)
         .setContentTitle(context.getString(R.string.notification_channel_id))
         .setContentText(notificationText)
         .setStyle(
             NotificationCompat.BigTextStyle()
-            .bigText(notificationTextExpanded))
+                .bigText(notificationTextExpanded)
+        )
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .setContentIntent(pendingIntent)
 
@@ -73,7 +89,8 @@ fun notificationBuilder(context: Context) {
         ) != PackageManager.PERMISSION_GRANTED
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ActivityCompat.requestPermissions(context as MainActivity,
+            ActivityCompat.requestPermissions(
+                context as MainActivity,
                 arrayOf(Manifest.permission.POST_NOTIFICATIONS),
                 1
             )

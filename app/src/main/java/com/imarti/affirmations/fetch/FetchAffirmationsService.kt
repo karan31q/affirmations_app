@@ -19,7 +19,7 @@ interface FetchAffirmationsService {
 }
 
 object AffirmationsApi {
-    val retrofitService : FetchAffirmationsService by lazy {
+    val retrofitService: FetchAffirmationsService by lazy {
         retrofit.create(FetchAffirmationsService::class.java)
     }
 

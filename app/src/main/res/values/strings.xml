@@ -1,18 +1,16 @@
 <resources>
     <string name="app_name">Affirmations</string>
     <string name="topbar_heading">Daily Affirmations</string>
-    <string name="setup_screen_text">"Welcome User!\nPlease update the following according to your preference"</string>
     <string name="topbar_settings_button">Settings Button</string>
     <string name="share_button">Share</string>
     <string name="settings_menu_heading">Settings</string>
     <string name="settings_menu_back_button">Back button</string>
     <string name="empty_username_warning">No username entered\nUsing default username</string>
     <string name="refresh_affirmation">Refresh</string>
-    <string name="got_it">Got it</string>
+    <string name="ok">OK</string>
     <string name="username_updated">Username updated</string>
     <string name="restart_app_notification">Please restart app for changes to take effect</string>
     <string name="restart_action">Restart</string>
-    <string name="journal_entry_add">Add journal entry</string>
     <string name="default_username">User</string>
     <string name="user_icon_desc">User icon</string>
     <string name="change_username">Change username</string>
@@ -32,5 +30,14 @@
     <string name="reminder_cancelled">Reminder cancelled</string>
     <string name="select_time_notifications">Select time for daily notifications</string>
     <string name="cancel_notifications">Cancel repeating notifications</string>
-    <string name="done">Done</string>
+    <string name="using_default_values">Using default values, please change them in settings later!</string>
+    <string name="welcome">Welcome User!</string>
+    <string name="welcome_instructions">Please update the following according to your preference.</string>
+    <string name="enter_username">Enter your username</string>
+    <string name="username_written_desc">Checkbox for username entered; checked</string>
+    <string name="username_not_written_desc">Checkbox for username entered; unchecked</string>
+    <string name="notification_time_selected_desc">Checkbox for notification scheduled; checked</string>
+    <string name="notification_time_not_selected_desc">Checkbox for notification scheduled; unchecked</string>
+    <string name="fill_in_req">Please fill in both of the requirements!</string>
+    <string name="skip">Skip</string>
 </resources>

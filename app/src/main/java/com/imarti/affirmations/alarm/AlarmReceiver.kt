@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 import java.util.Calendar
 
 
-class AlarmReceiver: BroadcastReceiver() {
+class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val tag = "DailyAffirmations"
         val action = intent.action
@@ -40,7 +40,7 @@ class AlarmReceiver: BroadcastReceiver() {
                 check if the time has already passed today and add a day if it that's the case
                 */
                 if (now.after(calendar)) {
-                    Log.i(tag,"Added a day.")
+                    Log.i(tag, "Added a day.")
                     calendar.add(Calendar.DATE, 1)
                 }
                 setAlarm(calendar, context)
@@ -48,10 +48,11 @@ class AlarmReceiver: BroadcastReceiver() {
                 Log.i(tag, "Alarms not set")
             }
         } else if (action != null && (action == "com.imarti.affirmations.ACTION_SET_ALARM" ||
-                    action == "com.imarti.affirmations.ACTION_CANCEL_ALARM")) {
+                    action == "com.imarti.affirmations.ACTION_CANCEL_ALARM")
+        ) {
             notificationBuilder(context)
         } else {
-            Log.i(tag,"Received unexpected action $action")
+            Log.i(tag, "Received unexpected action $action")
         }
     }
 }

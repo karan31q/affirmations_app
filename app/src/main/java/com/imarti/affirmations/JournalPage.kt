@@ -1,6 +1,7 @@
 package com.imarti.affirmations
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,73 +41,15 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun JournalPage() {
-
-    val context = LocalContext.current
+fun JournalPage(context: Context) {
     val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
-    fun saveJournalEntry(text: String) {
-        val entriesJson = sharedPrefs.getString("entries", "[]")
-        val entriesArray = JSONArray(entriesJson)
-        val entryObject = JSONObject().apply {
-            put("text", text)
-            put("dateTime", SimpleDateFormat("dd/MM/yy, HH:mm", Locale.getDefault()).format(Date()))
-        }
-        entriesArray.put(entryObject)
-        sharedPrefs.edit().putString("entries", entriesArray.toString()).apply()
+    var journalEntries by remember {
+        mutableStateOf(getJournalEntries(sharedPrefs))
     }
-
-    fun getJournalEntries(): List<JournalEntry> {
-        val entriesJson = sharedPrefs.getString("entries", "[]")
-        val entriesArray = JSONArray(entriesJson)
-        val entriesList = mutableListOf<JournalEntry>()
-        for (i in entriesArray.length() -1 downTo 0) {
-            val entryObject = entriesArray.getJSONObject(i)
-            entriesList.add(
-                JournalEntry(
-                    text = entryObject.getString("text"),
-                    dateTime = entryObject.getString("dateTime")
-                )
-            )
-        }
-        return entriesList
+    var journalEntryText by remember {
+        mutableStateOf("")
     }
-
-    fun deleteJournalEntry(index: Int) {
-        val entriesJson = sharedPrefs.getString("entries", "[]")
-        val entriesArray = JSONArray(entriesJson)
-        val entriesList = mutableListOf<JournalEntry>()
-
-        // Populate entriesList with existing entries
-        for (i in entriesArray.length() -1 downTo 0) {
-            val entryObject = entriesArray.getJSONObject(i)
-            entriesList.add(
-                JournalEntry(
-                    text = entryObject.getString("text"),
-                    dateTime = entryObject.getString("dateTime")
-                )
-            )
-        }
-
-        // Remove the entry at the specified index
-        if (index >= 0 && index < entriesList.size) {
-            entriesList.removeAt(index)
-        }
-
-        // Save the updated list back to SharedPreferences
-        val updatedEntriesJson = JSONArray()
-        for (entry in entriesList) {
-            val entryObject = JSONObject().apply {
-                put("text", entry.text)
-                put("dateTime", entry.dateTime)
-            }
-            updatedEntriesJson.put(entryObject)
-        }
-        sharedPrefs.edit().putString("entries", updatedEntriesJson.toString()).apply()
-    }
-
-    var journalEntries by remember { mutableStateOf(getJournalEntries()) }
-    var journalEntryText by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -128,10 +71,10 @@ fun JournalPage() {
         )
         Button(
             onClick = {
-                saveJournalEntry(journalEntryText)
+                saveJournalEntry(journalEntryText, sharedPrefs)
                 journalEntryText = "" // save the text and then clear the text field
                 // update entries after saving
-                journalEntries = getJournalEntries()
+                journalEntries = getJournalEntries(sharedPrefs)
             },
             modifier = Modifier.align(Alignment.End)
         ) {
@@ -140,7 +83,7 @@ fun JournalPage() {
                 fontFamily = HarmonyOS_Sans
             )
         }
-        
+
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -171,9 +114,9 @@ fun JournalPage() {
                             )
                             IconButton(
                                 onClick = {
-                                    deleteJournalEntry(index)
+                                    deleteJournalEntry(index, sharedPrefs)
                                     // update entries after deleting
-                                    journalEntries = getJournalEntries()
+                                    journalEntries = getJournalEntries(sharedPrefs)
                                 }
                             ) {
                                 Icon(
@@ -189,11 +132,67 @@ fun JournalPage() {
     }
 }
 
-
 data class JournalEntry(
     val text: String,
     val dateTime: String
 )
+
+fun saveJournalEntry(text: String, sharedPrefs: SharedPreferences) {
+    val entriesJson = sharedPrefs.getString("entries", "[]")
+    val entriesArray = JSONArray(entriesJson)
+    val entryObject = JSONObject().apply {
+        put("text", text)
+        put("dateTime", SimpleDateFormat("dd/MM/yy, HH:mm", Locale.getDefault()).format(Date()))
+    }
+    entriesArray.put(entryObject)
+    sharedPrefs.edit().putString("entries", entriesArray.toString()).apply()
+}
+
+fun getJournalEntries(sharedPrefs: SharedPreferences): List<JournalEntry> {
+    val entriesJson = sharedPrefs.getString("entries", "[]")
+    val entriesArray = JSONArray(entriesJson)
+    val entriesList = mutableListOf<JournalEntry>()
+    for (i in entriesArray.length() - 1 downTo 0) {
+        val entryObject = entriesArray.getJSONObject(i)
+        entriesList.add(
+            JournalEntry(
+                text = entryObject.getString("text"),
+                dateTime = entryObject.getString("dateTime")
+            )
+        )
+    }
+    return entriesList
+}
+
+fun deleteJournalEntry(index: Int, sharedPrefs: SharedPreferences) {
+    val entriesJson = sharedPrefs.getString("entries", "[]")
+    val entriesArray = JSONArray(entriesJson)
+    val entriesList = mutableListOf<JournalEntry>()
+
+    for (i in entriesArray.length() - 1 downTo 0) {
+        val entryObject = entriesArray.getJSONObject(i)
+        entriesList.add(
+            JournalEntry(
+                text = entryObject.getString("text"),
+                dateTime = entryObject.getString("dateTime")
+            )
+        )
+    }
+
+    if (index >= 0 && index < entriesList.size) {
+        entriesList.removeAt(index)
+    }
+
+    val updatedEntriesJson = JSONArray()
+    for (entry in entriesList) {
+        val entryObject = JSONObject().apply {
+            put("text", entry.text)
+            put("dateTime", entry.dateTime)
+        }
+        updatedEntriesJson.put(entryObject)
+    }
+    sharedPrefs.edit().putString("entries", updatedEntriesJson.toString()).apply()
+}
 
 @Preview(showBackground = true)
 @Composable
@@ -237,6 +236,6 @@ fun JournalCardView() {
 @Composable
 fun JournalPagePreview() {
     AffirmationsTheme {
-        JournalPage()
+        JournalPage(LocalContext.current)
     }
 }
