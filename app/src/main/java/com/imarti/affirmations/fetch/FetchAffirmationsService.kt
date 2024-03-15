@@ -6,7 +6,7 @@ import retrofit2.http.GET
 
 
 private const val BASE_URL =
-    "https://karan31q.pythonanywhere.com"
+    "https://affirmations-app.vercel.app"
 
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(ScalarsConverterFactory.create())
