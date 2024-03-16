@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.imarti.affirmations.notificationBuilder
-import com.imarti.affirmations.setAlarm
 import java.time.LocalDateTime
 import java.util.Calendar
 

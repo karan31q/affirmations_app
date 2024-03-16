@@ -48,6 +48,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.imarti.affirmations.clock.ClockDialogImarti
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 import com.imarti.affirmations.ui.theme.HarmonyOS_Sans
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
@@ -56,7 +57,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SetupScreen(navController: NavHostController) {
+fun SetupUI(navController: NavHostController) {
     val context = LocalContext.current
     val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
@@ -312,7 +313,9 @@ fun SetupScreen(navController: NavHostController) {
                     Icon(
                         if (userNameWritten) icon1.stepDone else icon1.stepNotDone,
                         tint = if (userNameWritten) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
-                        contentDescription = if (userNameWritten) stringResource(R.string.username_written_desc) else stringResource(R.string.username_not_written_desc)
+                        contentDescription = if (userNameWritten) stringResource(R.string.username_written_desc) else stringResource(
+                            R.string.username_not_written_desc
+                        )
                     )
                     Text(
                         icon1.title,
@@ -328,7 +331,9 @@ fun SetupScreen(navController: NavHostController) {
                     Icon(
                         if (notificationTimeSelected) icon2.stepDone else icon2.stepNotDone,
                         tint = if (notificationTimeSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
-                        contentDescription = if (notificationTimeSelected) stringResource(R.string.notification_time_selected_desc) else stringResource(R.string.notification_time_not_selected_desc)
+                        contentDescription = if (notificationTimeSelected) stringResource(R.string.notification_time_selected_desc) else stringResource(
+                            R.string.notification_time_not_selected_desc
+                        )
                     )
                     Text(
                         icon2.title,
@@ -387,6 +392,6 @@ fun SetupScreen(navController: NavHostController) {
 @Composable
 fun SetupScreenPreview() {
     AffirmationsTheme {
-        SetupScreen(navController = NavHostController(LocalContext.current))
+        SetupUI(navController = NavHostController(LocalContext.current))
     }
 }

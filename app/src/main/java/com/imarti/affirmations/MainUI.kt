@@ -41,6 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.imarti.affirmations.fetch.AffirmationsApi
+import com.imarti.affirmations.pages.AffirmationsPage
+import com.imarti.affirmations.pages.JournalPage
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 import com.imarti.affirmations.ui.theme.HarmonyOS_Sans
 

@@ -1,4 +1,4 @@
-package com.imarti.affirmations
+package com.imarti.affirmations.pages
 
 import android.content.Context
 import android.content.Intent
@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.imarti.affirmations.R
 import com.imarti.affirmations.fetch.AffirmationsApi
 import com.imarti.affirmations.fetch.FetchAffirmationsService
 import com.imarti.affirmations.ui.theme.AffirmationsTheme

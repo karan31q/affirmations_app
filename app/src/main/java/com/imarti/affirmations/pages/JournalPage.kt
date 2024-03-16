@@ -1,4 +1,4 @@
-package com.imarti.affirmations
+package com.imarti.affirmations.pages
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -32,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.imarti.affirmations.R
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 import com.imarti.affirmations.ui.theme.HarmonyOS_Sans
 import org.json.JSONArray

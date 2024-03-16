@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.imarti.affirmations.pages.SettingsPage
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 
 
@@ -42,7 +43,7 @@ class MainActivity : ComponentActivity() {
                         navController,
                         startDestination = if (isFirstLaunch) "setup" else "main"
                     ) {
-                        composable("setup") { SetupScreen(navController) }
+                        composable("setup") { SetupUI(navController) }
                         composable("main") { MainUI(navController) }
                         composable("settings") { SettingsPage(navController) }
                     }

@@ -1,4 +1,4 @@
-package com.imarti.affirmations
+package com.imarti.affirmations.alarm
 
 import android.Manifest
 import android.app.AlarmManager
@@ -11,7 +11,8 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.imarti.affirmations.alarm.AlarmReceiver
+import com.imarti.affirmations.MainActivity
+import com.imarti.affirmations.R
 import java.util.Calendar
 
 const val tag = "DailyAffirmations"
