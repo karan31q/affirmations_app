@@ -40,4 +40,5 @@
     <string name="notification_time_not_selected_desc">Checkbox for notification scheduled; unchecked</string>
     <string name="fill_in_req">Please fill in both of the requirements!</string>
     <string name="skip">Skip</string>
+    <string name="set_username">Set username</string>
 </resources>

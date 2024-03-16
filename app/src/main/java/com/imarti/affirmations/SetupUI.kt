@@ -44,10 +44,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.imarti.affirmations.alarm.cancelAlarm
 import com.imarti.affirmations.clock.ClockDialogImarti
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 import com.imarti.affirmations.ui.theme.HarmonyOS_Sans
@@ -91,7 +93,7 @@ fun SetupUI(navController: NavHostController) {
 
     val scope = rememberCoroutineScope()
     val clockState = rememberUseCaseState(
-        onCloseRequest = {
+        onFinishedRequest = {
             scope.launch {
                 snackbarHostState.showSnackbar(
                     message = alarmSetMessage,
@@ -100,6 +102,9 @@ fun SetupUI(navController: NavHostController) {
                 )
             }
             notificationTimeSelected = true
+        },
+        onDismissRequest = {
+            cancelAlarm(context) // cancel alarm if dismissed
         }
     )
 
@@ -121,7 +126,8 @@ fun SetupUI(navController: NavHostController) {
             },
             title = {
                 Text(
-                    text = stringResource(R.string.change_username)
+                    text = stringResource(R.string.set_username),
+                    fontFamily = HarmonyOS_Sans
                 )
             },
             text = {
@@ -129,7 +135,10 @@ fun SetupUI(navController: NavHostController) {
                     value = userName,
                     onValueChange = {
                         userName = it
-                    }
+                    },
+                    textStyle = TextStyle(
+                        fontFamily = HarmonyOS_Sans
+                    )
                 )
             },
             onDismissRequest = {
@@ -162,7 +171,8 @@ fun SetupUI(navController: NavHostController) {
                     }
                 ) {
                     Text(
-                        text = stringResource(R.string.confirm_text)
+                        text = stringResource(R.string.confirm_text),
+                        fontFamily = HarmonyOS_Sans
                     )
                 }
             },
@@ -173,7 +183,8 @@ fun SetupUI(navController: NavHostController) {
                     }
                 ) {
                     Text(
-                        text = stringResource(R.string.dismiss_text)
+                        text = stringResource(R.string.dismiss_text),
+                        fontFamily = HarmonyOS_Sans
                     )
                 }
             }
@@ -212,7 +223,8 @@ fun SetupUI(navController: NavHostController) {
                         text = stringResource(R.string.confirm_text),
                         modifier = Modifier
                             .fillMaxWidth(),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        fontFamily = HarmonyOS_Sans
                     )
                 }
             }
@@ -380,7 +392,8 @@ fun SetupUI(navController: NavHostController) {
                     }
                 ) {
                     Text(
-                        stringResource(R.string.skip)
+                        stringResource(R.string.skip),
+                        fontFamily = HarmonyOS_Sans
                     )
                 }
             }

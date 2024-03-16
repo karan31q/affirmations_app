@@ -46,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -53,6 +54,7 @@ import com.imarti.affirmations.R
 import com.imarti.affirmations.alarm.cancelAlarm
 import com.imarti.affirmations.clock.ClockDialogImarti
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
+import com.imarti.affirmations.ui.theme.HarmonyOS_Sans
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import kotlinx.coroutines.launch
 
@@ -86,7 +88,7 @@ fun SettingsPage(navController: NavHostController) {
 
     val scope = rememberCoroutineScope()
     val clockState = rememberUseCaseState(
-        onCloseRequest = {
+        onFinishedRequest = {
             scope.launch {
                 snackbarHostState.showSnackbar(
                     message = alarmSetMessage,
@@ -113,7 +115,8 @@ fun SettingsPage(navController: NavHostController) {
                     Text(
                         text = stringResource(R.string.settings_menu_heading),
                         maxLines = 1,
-                        style = MaterialTheme.typography.headlineLarge
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontFamily = HarmonyOS_Sans
                     )
                 },
                 navigationIcon = {
@@ -168,13 +171,17 @@ fun SettingsPage(navController: NavHostController) {
                         },
                         title = {
                             Text(
-                                text = stringResource(R.string.change_username)
+                                text = stringResource(R.string.change_username),
+                                fontFamily = HarmonyOS_Sans
                             )
                         },
                         text = {
                             TextField(
                                 value = userName,
                                 onValueChange = { userName = it },
+                                textStyle = TextStyle(
+                                    fontFamily = HarmonyOS_Sans
+                                )
                             )
                         },
                         onDismissRequest = {
@@ -206,7 +213,8 @@ fun SettingsPage(navController: NavHostController) {
                                 }
                             ) {
                                 Text(
-                                    text = stringResource(R.string.confirm_text)
+                                    text = stringResource(R.string.confirm_text),
+                                    fontFamily = HarmonyOS_Sans
                                 )
                             }
                         },
@@ -217,7 +225,8 @@ fun SettingsPage(navController: NavHostController) {
                                 }
                             ) {
                                 Text(
-                                    text = stringResource(R.string.dismiss_text)
+                                    text = stringResource(R.string.dismiss_text),
+                                    fontFamily = HarmonyOS_Sans
                                 )
                             }
                         }
@@ -226,7 +235,8 @@ fun SettingsPage(navController: NavHostController) {
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
                     text = userName,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    fontFamily = HarmonyOS_Sans
                 )
             }
             Column(
@@ -254,7 +264,8 @@ fun SettingsPage(navController: NavHostController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 10.dp),
-                        text = stringResource(R.string.select_time_notifications)
+                        text = stringResource(R.string.select_time_notifications),
+                        fontFamily = HarmonyOS_Sans
                     )
                 }
                 TextButton(
@@ -286,6 +297,7 @@ fun SettingsPage(navController: NavHostController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 10.dp),
+                        fontFamily = HarmonyOS_Sans
                     )
                 }
                 TextButton(
@@ -334,6 +346,7 @@ fun SettingsPage(navController: NavHostController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 10.dp),
+                        fontFamily = HarmonyOS_Sans
                     )
                 }
             }

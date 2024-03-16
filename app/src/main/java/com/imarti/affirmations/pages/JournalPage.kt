@@ -62,7 +62,9 @@ fun JournalPage(context: Context) {
             value = journalEntryText,
             onValueChange = { journalEntryText = it },
             modifier = Modifier.fillMaxWidth(),
-            textStyle = TextStyle(fontFamily = HarmonyOS_Sans),
+            textStyle = TextStyle(
+                fontFamily = HarmonyOS_Sans
+            ),
             placeholder = {
                 Text(
                     stringResource(R.string.enter_journal_entry),
@@ -218,7 +220,7 @@ fun JournalCardView() {
             ) {
                 Text(
                     "01/03/2024, 12:00",
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
                 )
                 IconButton(
                     onClick = {}
