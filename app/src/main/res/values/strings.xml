@@ -41,4 +41,12 @@
     <string name="fill_in_req">Please fill in both of the requirements!</string>
     <string name="skip">Skip</string>
     <string name="set_username">Set username</string>
+    <string name="made_by">Made with ❤️ by Karan</string>
+    <string name="portfolio_link">https://imarti.dev</string>
+    <string name="bug_report_desc">Bug report</string>
+    <string name="bug_report">Noticed a bug? report it!</string>
+    <string name="bug_report_link">https://github.com/karan31q/affirmations_app/issues</string>
+    <string name="view_source_code">View the app source code</string>
+    <string name="app_source">https://github.com/karan31q/affirmations_app</string>
+    <string name="harmonyos_sans_notice">This app uses HarmonyOS Sans font</string>
 </resources>
