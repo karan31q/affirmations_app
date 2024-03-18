@@ -93,18 +93,20 @@ fun AffirmationsPage(affirmationsApi: FetchAffirmationsService, context: Context
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSecondaryContainer,
         )
-        Button(
-            onClick = {
-                CoroutineScope(Dispatchers.IO).launch {
-                    fetchAffirmation(affirmationsApi)
-                }
-            },
-            modifier = Modifier.padding(top = 5.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.refresh_affirmation),
-                fontFamily = HarmonyOS_Sans
-            )
+        if (!canFetchAffirmation) {
+            Button(
+                onClick = {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        fetchAffirmation(affirmationsApi)
+                    }
+                },
+                modifier = Modifier.padding(top = 5.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.refresh_affirmation),
+                    fontFamily = HarmonyOS_Sans
+                )
+            }
         }
         if (canFetchAffirmation) {
             val sendIntent: Intent = Intent().apply {
