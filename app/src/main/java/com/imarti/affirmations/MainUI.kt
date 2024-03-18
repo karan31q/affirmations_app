@@ -24,6 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -69,6 +71,9 @@ fun MainUI(navController: NavHostController) {
     }
     var journalPage by remember {
         mutableStateOf(false)
+    }
+    val snackbarHostState = remember {
+        SnackbarHostState()
     }
 
     Scaffold(
@@ -140,6 +145,9 @@ fun MainUI(navController: NavHostController) {
                 }
             }
         },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -151,7 +159,7 @@ fun MainUI(navController: NavHostController) {
         ) {
             // if it works it works
             if (journalPage) {
-                JournalPage(context)
+                JournalPage(context, snackbarHostState)
             } else {
                 AffirmationsPage(AffirmationsApi.retrofitService, context)
             }
