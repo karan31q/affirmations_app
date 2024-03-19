@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -83,7 +84,7 @@ fun AffirmationsPage(affirmationsApi: FetchAffirmationsService, context: Context
             text = affirmation,
             fontFamily = HarmonyOS_Sans,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Justify,
             maxLines = 4
         )
@@ -91,7 +92,7 @@ fun AffirmationsPage(affirmationsApi: FetchAffirmationsService, context: Context
             text = affirmationSource,
             fontFamily = HarmonyOS_Sans,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            color = MaterialTheme.colorScheme.onSurface,
         )
         if (!canFetchAffirmation) {
             Button(
