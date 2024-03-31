@@ -27,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -85,7 +86,8 @@ fun MainUI(navController: NavHostController) {
                     .fillMaxWidth()
                     .padding(top = 5.dp, start = 10.dp, end = 10.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    // same as NavigationBar
+                    containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
                 ),
                 shape = CircleShape
             ) {
