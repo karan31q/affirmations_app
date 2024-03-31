@@ -388,15 +388,17 @@ fun SetupUI(navController: NavHostController) {
                         modifier = Modifier.size(30.dp)
                     )
                 }
-                TextButton(
-                    onClick = {
-                        showSkipDialog = true
+                if (!userNameWritten || !notificationTimeSelected) {
+                    TextButton(
+                        onClick = {
+                            showSkipDialog = true
+                        }
+                    ) {
+                        Text(
+                            stringResource(R.string.skip),
+                            fontFamily = HarmonyOS_Sans
+                        )
                     }
-                ) {
-                    Text(
-                        stringResource(R.string.skip),
-                        fontFamily = HarmonyOS_Sans
-                    )
                 }
             }
         }
