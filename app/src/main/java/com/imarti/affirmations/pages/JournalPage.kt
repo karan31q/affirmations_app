@@ -166,7 +166,7 @@ fun saveJournalEntry(text: String, sharedPrefs: SharedPreferences) {
     val entriesArray = JSONArray(entriesJson)
     val entryObject = JSONObject().apply {
         put("text", text)
-        put("dateTime", SimpleDateFormat("dd/MM/yy, HH:mm", Locale.getDefault()).format(Date()))
+        put("dateTime", SimpleDateFormat("dd/MM/yy, hh:mm a", Locale.getDefault()).format(Date()))
     }
     entriesArray.put(entryObject)
     sharedPrefs.edit().putString("entries", entriesArray.toString()).apply()
@@ -191,31 +191,14 @@ fun getJournalEntries(sharedPrefs: SharedPreferences): List<JournalEntry> {
 fun deleteJournalEntry(index: Int, sharedPrefs: SharedPreferences) {
     val entriesJson = sharedPrefs.getString("entries", "[]")
     val entriesArray = JSONArray(entriesJson)
-    val entriesList = mutableListOf<JournalEntry>()
 
-    for (i in entriesArray.length() - 1 downTo 0) {
-        val entryObject = entriesArray.getJSONObject(i)
-        entriesList.add(
-            JournalEntry(
-                text = entryObject.getString("text"),
-                dateTime = entryObject.getString("dateTime")
-            )
-        )
-    }
+    val entriesList = getJournalEntries(sharedPrefs)
 
     if (index >= 0 && index < entriesList.size) {
-        entriesList.removeAt(index)
+        val entriesIndex = entriesArray.length() - index - 1
+        entriesArray.remove(entriesIndex)
+        sharedPrefs.edit().putString("entries", entriesArray.toString()).apply()
     }
-
-    val updatedEntriesJson = JSONArray()
-    for (entry in entriesList) {
-        val entryObject = JSONObject().apply {
-            put("text", entry.text)
-            put("dateTime", entry.dateTime)
-        }
-        updatedEntriesJson.put(entryObject)
-    }
-    sharedPrefs.edit().putString("entries", updatedEntriesJson.toString()).apply()
 }
 
 @Preview(showBackground = true)
