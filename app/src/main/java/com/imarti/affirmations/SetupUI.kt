@@ -94,14 +94,16 @@ fun SetupUI(navController: NavHostController) {
     val scope = rememberCoroutineScope()
     val clockState = rememberUseCaseState(
         onFinishedRequest = {
-            scope.launch {
-                snackbarHostState.showSnackbar(
-                    message = alarmSetMessage,
-                    actionLabel = okLabel,
-                    duration = SnackbarDuration.Short
-                )
+            if (sharedPrefs.getBoolean("alarm_set", false)) {
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = alarmSetMessage,
+                        actionLabel = okLabel,
+                        duration = SnackbarDuration.Short
+                    )
+                }
+                notificationTimeSelected = true
             }
-            notificationTimeSelected = true
         },
         onDismissRequest = {
             cancelAlarm(context) // cancel alarm if dismissed
