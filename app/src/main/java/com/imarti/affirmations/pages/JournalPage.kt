@@ -19,9 +19,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,6 +51,7 @@ import java.util.Locale
 @Composable
 fun JournalPage(context: Context, snackbarHostState: SnackbarHostState) {
     val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     // so it can be used with coroutines
     val okLabel = stringResource(R.string.ok)
@@ -80,7 +84,11 @@ fun JournalPage(context: Context, snackbarHostState: SnackbarHostState) {
                     stringResource(R.string.enter_journal_entry),
                     fontFamily = HarmonyOS_Sans
                 )
-            }
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
         )
         Button(
             onClick = {
@@ -93,11 +101,13 @@ fun JournalPage(context: Context, snackbarHostState: SnackbarHostState) {
                         )
                     }
                     journalEntryText = "" // just in case
+                    keyboardController!!.hide()
                 } else {
                     saveJournalEntry(journalEntryText, sharedPrefs)
                     journalEntryText = "" // save the text and then clear the text field
                     // update entries after saving
                     journalEntries = getJournalEntries(sharedPrefs)
+                    keyboardController!!.hide()
                 }
             },
             modifier = Modifier.align(Alignment.End)

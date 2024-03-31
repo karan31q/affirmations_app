@@ -49,5 +49,5 @@
     <string name="view_source_code">View the app source code</string>
     <string name="app_source">https://github.com/karan31q/affirmations_app</string>
     <string name="harmonyos_sans_notice">This app uses HarmonyOS Sans font</string>
-    <string name="empty_journal_entry">Journal entry is empty\nPlease enter something to save journal</string>
+    <string name="empty_journal_entry">Journal entry is empty,\nPlease enter something to save journal.</string>
 </resources>
