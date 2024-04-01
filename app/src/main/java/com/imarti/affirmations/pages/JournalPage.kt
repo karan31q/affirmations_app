@@ -175,7 +175,7 @@ fun saveJournalEntry(text: String, sharedPrefs: SharedPreferences) {
     val entriesJson = sharedPrefs.getString("entries", "[]")
     val entriesArray = JSONArray(entriesJson)
     val entryObject = JSONObject().apply {
-        put("text", text)
+        put("text", text.trim()) // remove whitespace if any
         put("dateTime", SimpleDateFormat("dd/MM/yy, hh:mm a", Locale.getDefault()).format(Date()))
     }
     entriesArray.put(entryObject)
