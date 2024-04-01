@@ -87,7 +87,7 @@ fun JournalPage(context: Context, snackbarHostState: SnackbarHostState) {
             },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface
             )
         )
         Button(
