@@ -1,8 +1,10 @@
 package com.imarti.affirmations.pages
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,9 +32,14 @@ import androidx.compose.ui.unit.dp
 import com.imarti.affirmations.R
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 import com.imarti.affirmations.ui.theme.HarmonyOS_Sans
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun DailyTasksPage(context: Context) {
+    val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+
     val questions: Array<String> = stringArrayResource(id = R.array.questions)
 
     var questionsDialog by remember {
@@ -43,6 +50,24 @@ fun DailyTasksPage(context: Context) {
     }
     var questionsAnswer by remember {
         mutableStateOf("")
+    }
+
+    fun saveAnswers(index: Int, answer: String, time: String, sharedPrefs: SharedPreferences) {
+        sharedPrefs.edit().putBoolean("answer_${index}", true).apply()
+        sharedPrefs.edit().putString("daily_answer_${index}", answer).apply()
+        sharedPrefs.edit().putString("daily_answer_${index}_time", time).apply()
+    }
+
+    fun getAnswers(index: Int, sharedPrefs: SharedPreferences): String? {
+        return sharedPrefs.getString("daily_answer_${index}", "Error")
+    }
+
+    fun getAnswersFilledTime(index: Int, sharedPrefs: SharedPreferences): String? {
+        return sharedPrefs.getString("daily_answer_${index}_time", "Null")
+    }
+
+    fun getAnswersFilled(index: Int, sharedPrefs: SharedPreferences): Boolean {
+        return sharedPrefs.getBoolean("answer_${index}", false)
     }
 
     LazyColumn(
@@ -88,12 +113,32 @@ fun DailyTasksPage(context: Context) {
         AlertDialog(
             onDismissRequest = { questionsDialog = false },
             confirmButton = {
-                TextButton(onClick = { questionsDialog = false }
-                ) {
-                    Text(
-                        stringResource(R.string.confirm_text),
-                        fontFamily = HarmonyOS_Sans
-                    )
+                if (!getAnswersFilled(questionsIndex + 1, sharedPrefs)) { // if answers aren't filled
+                    TextButton(onClick = {
+                        questionsDialog = false
+                        val time = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date())
+                        saveAnswers(questionsIndex + 1, questionsAnswer, time, sharedPrefs)
+                        questionsAnswer = ""
+                    }
+                    ) {
+                        Text(
+                            stringResource(R.string.confirm_text),
+                            fontFamily = HarmonyOS_Sans
+                        )
+                    }
+                }
+            },
+            dismissButton = {
+                if (getAnswersFilled(questionsIndex + 1, sharedPrefs)) { // if answers are filled
+                    TextButton(onClick = {
+                        questionsDialog = false
+                    }
+                    ) {
+                        Text(
+                            stringResource(R.string.dismiss_text),
+                            fontFamily = HarmonyOS_Sans
+                        )
+                    }
                 }
             },
             title = {
@@ -103,20 +148,46 @@ fun DailyTasksPage(context: Context) {
                 )
             },
             text = {
-                OutlinedTextField(
-                    value = questionsAnswer,
-                    onValueChange = { questionsAnswer = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = TextStyle(
-                        fontFamily = HarmonyOS_Sans
-                    ),
-                    placeholder = {
+                if (getAnswersFilled(questionsIndex + 1, sharedPrefs)) { // check if answer was already filled
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         Text(
-                            stringResource(R.string.enter_answer),
-                            fontFamily = HarmonyOS_Sans
+                            getAnswers(questionsIndex + 1, sharedPrefs) ?: "Error",
+                            fontFamily = HarmonyOS_Sans,
+                            style = MaterialTheme.typography.bodyLarge
                         )
-                    },
-                )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text(
+                                getAnswersFilledTime(questionsIndex + 1, sharedPrefs) ?: "Null",
+                                fontFamily = HarmonyOS_Sans,
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)
+                            )
+                        }
+                    }
+                } else {
+                    OutlinedTextField(
+                        value = questionsAnswer,
+                        onValueChange = {
+                            questionsAnswer = it
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        textStyle = TextStyle(
+                            fontFamily = HarmonyOS_Sans
+                        ),
+                        placeholder = {
+                            Text(
+                                stringResource(R.string.enter_answer),
+                                fontFamily = HarmonyOS_Sans
+                            )
+                        },
+                    )
+                }
             }
         )
     }
