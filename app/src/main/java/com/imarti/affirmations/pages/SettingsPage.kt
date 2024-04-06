@@ -318,12 +318,7 @@ fun SettingsPage(navController: NavHostController) {
                     contentPadding = PaddingValues(15.dp),
                     onClick = {
                         // reset every shared prefs to default
-                        sharedPrefs.edit().putString("user_name", "").apply()
-                        sharedPrefs.edit().putBoolean("first_launch", true).apply()
-                        sharedPrefs.edit().putInt("hour_selected", 8).apply()
-                        sharedPrefs.edit().putInt("minute_selected", 30).apply()
-                        sharedPrefs.edit().putBoolean("alarm_set", false).apply()
-                        sharedPrefs.edit().putString("entries", "[]").apply()
+                        sharedPrefs.edit().clear().apply()
                         cancelAlarm(context)
 
                         // show a snackbar for same
