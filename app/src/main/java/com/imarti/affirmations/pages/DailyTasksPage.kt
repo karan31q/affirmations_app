@@ -54,20 +54,31 @@ fun DailyTasksPage(context: Context) {
 
     fun saveAnswers(index: Int, answer: String, time: String, sharedPrefs: SharedPreferences) {
         sharedPrefs.edit().putBoolean("answer_${index}", true).apply()
-        sharedPrefs.edit().putString("daily_answer_${index}", answer).apply()
+        sharedPrefs.edit().putString("daily_answer_${index}", answer.trim()).apply() // remove whitespace if needed
         sharedPrefs.edit().putString("daily_answer_${index}_time", time).apply()
+        sharedPrefs.edit().putBoolean("daily_task_completed", true).apply()
+        sharedPrefs.edit().putInt("prev_ques_completed", index).apply()
     }
 
     fun getAnswers(index: Int, sharedPrefs: SharedPreferences): String? {
         return sharedPrefs.getString("daily_answer_${index}", "Error")
     }
 
+    // i know these function names are kinda confusing, ill change them when i can
     fun getAnswersFilledTime(index: Int, sharedPrefs: SharedPreferences): String? {
         return sharedPrefs.getString("daily_answer_${index}_time", "Null")
     }
 
     fun getAnswersFilled(index: Int, sharedPrefs: SharedPreferences): Boolean {
         return sharedPrefs.getBoolean("answer_${index}", false)
+    }
+
+    fun getDailyAnswersFilled(sharedPrefs: SharedPreferences): Boolean {
+        return sharedPrefs.getBoolean("daily_task_completed", false)
+    }
+
+    fun getPreviousAnswerFilled(sharedPrefs: SharedPreferences): Int {
+        return sharedPrefs.getInt("prev_ques_completed", 1)
     }
 
     LazyColumn(
@@ -113,7 +124,8 @@ fun DailyTasksPage(context: Context) {
         AlertDialog(
             onDismissRequest = { questionsDialog = false },
             confirmButton = {
-                if (!getAnswersFilled(questionsIndex + 1, sharedPrefs)) { // if answers aren't filled
+                // if answers aren't filled and daily target isn't completed
+                if (!getAnswersFilled(questionsIndex + 1, sharedPrefs) && !getDailyAnswersFilled(sharedPrefs)) {
                     TextButton(onClick = {
                         questionsDialog = false
                         val time = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date())
@@ -129,7 +141,8 @@ fun DailyTasksPage(context: Context) {
                 }
             },
             dismissButton = {
-                if (getAnswersFilled(questionsIndex + 1, sharedPrefs)) { // if answers are filled
+                // if answers are filled or daily target is completed
+                if (getAnswersFilled(questionsIndex + 1, sharedPrefs) || getDailyAnswersFilled(sharedPrefs)) {
                     TextButton(onClick = {
                         questionsDialog = false
                     }
@@ -148,7 +161,8 @@ fun DailyTasksPage(context: Context) {
                 )
             },
             text = {
-                if (getAnswersFilled(questionsIndex + 1, sharedPrefs)) { // check if answer was already filled
+                // check if answer was already filled
+                if (getAnswersFilled(questionsIndex + 1, sharedPrefs)) {
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -171,7 +185,9 @@ fun DailyTasksPage(context: Context) {
                         }
                     }
                 } else {
+                    val currentQuestion = getPreviousAnswerFilled(sharedPrefs)
                     OutlinedTextField(
+                        enabled = !getDailyAnswersFilled(sharedPrefs) || currentQuestion == questionsIndex,
                         value = questionsAnswer,
                         onValueChange = {
                             questionsAnswer = it

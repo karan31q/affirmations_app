@@ -98,5 +98,6 @@ fun notificationBuilder(context: Context) {
         }
     }
     Log.i(tag, "Alarm triggered, notifying user")
+    sharedPrefs.edit().putBoolean("daily_task_completed", false).apply() // re-enable text field in next question
     notificationManager.notify(1, builder.build())
 }
