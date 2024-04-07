@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -88,6 +91,8 @@ fun DailyTasksPage(context: Context) {
     ) {
         items(questions.size) { index ->
             val indexPlus1 = index + 1
+            val dailyQuestionsDone = getAnswersFilled(indexPlus1, sharedPrefs)
+
             Column(
                 verticalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = Modifier
@@ -109,13 +114,24 @@ fun DailyTasksPage(context: Context) {
                         questionsDialog = true
                     }
                 ) {
-                    Text(
-                        text = "Day $indexPlus1",
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier
-                            .padding(40.dp),
-                        fontFamily = HarmonyOS_Sans
-                    )
+                    Row(
+                        modifier = Modifier.padding(40.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Day $indexPlus1",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontFamily = HarmonyOS_Sans
+                        )
+                        if (dailyQuestionsDone) {
+                            Icon(
+                                Icons.Outlined.Check,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                 }
             }
         }
