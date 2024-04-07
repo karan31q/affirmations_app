@@ -50,4 +50,37 @@
     <string name="app_source">https://github.com/karan31q/affirmations_app</string>
     <string name="harmonyos_sans_notice">This app uses HarmonyOS Sans font</string>
     <string name="empty_journal_entry">Journal entry is empty,\nPlease enter something to save journal.</string>
+    <string name="enter_answer">Enter your answer</string>
+    <string-array name="questions">
+        <item>What was the highlight of your day today?</item>
+        <item>Did you encounter any challenges or obstacles? How did you handle them?</item>
+        <item>What are you grateful for today?</item>
+        <item>Did you learn anything new today? If so, what was it?</item>
+        <item>How did you feel emotionally throughout the day?</item>
+        <item>What small act of kindness did you witness or experience today?</item>
+        <item>Did you achieve any goals or make progress toward them?</item>
+        <item>What is something you\'re looking forward to in the near future?</item>
+        <item>Did you spend quality time with loved ones today?</item>
+        <item>What made you smile or laugh today?</item>
+        <item>What thoughts or ideas occupied your mind the most today?</item>
+        <item>Did you engage in any self-care activities today? If so, what did you do?</item>
+        <item>What was the most significant decision you made today?</item>
+        <item>Did you face any fears or step out of your comfort zone today?</item>
+        <item>How did you nourish your mind, body, or soul today?</item>
+        <item>Did you have any meaningful conversations today? What were they about?</item>
+        <item>What inspired you today, whether it be a person, a quote, or an event?</item>
+        <item>How did you contribute to someone else\'s happiness or well-being today?</item>
+        <item>What did you do to unwind or relax at the end of the day?</item>
+        <item>Did you encounter any moments of reflection or introspection today?</item>
+        <item>What are you proud of accomplishing today, no matter how small?</item>
+        <item>Did you experience any moments of joy or contentment today?</item>
+        <item>What did you do to stay focused and productive today?</item>
+        <item>Did you express gratitude to anyone today? If so, who and for what?</item>
+        <item>How did you respond to any setbacks or disappointments you faced today?</item>
+        <item>Did you practice mindfulness or meditation today? If so, how did it benefit you?</item>
+        <item>What inspired you to take action or make a change today?</item>
+        <item>Did you make any new connections or strengthen existing relationships today?</item>
+        <item>How did you incorporate creativity into your day, if at all?</item>
+        <item>What are you excited about for tomorrow?</item>
+    </string-array>
 </resources>
