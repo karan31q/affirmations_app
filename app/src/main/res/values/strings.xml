@@ -51,6 +51,7 @@
     <string name="harmonyos_sans_notice">This app uses HarmonyOS Sans font</string>
     <string name="empty_journal_entry">Journal entry is empty,\nPlease enter something to save journal.</string>
     <string name="enter_answer">Enter your answer</string>
+    <string name="daily_task_answer_empty">Answer is empty, please enter something!</string>
     <string-array name="questions">
         <item>What was the highlight of your day today?</item>
         <item>Did you encounter any challenges or obstacles? How did you handle them?</item>

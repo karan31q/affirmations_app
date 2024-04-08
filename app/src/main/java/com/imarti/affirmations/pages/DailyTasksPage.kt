@@ -16,6 +16,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -23,10 +25,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -35,16 +39,20 @@ import androidx.compose.ui.unit.dp
 import com.imarti.affirmations.R
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 import com.imarti.affirmations.ui.theme.HarmonyOS_Sans
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 @Composable
-fun DailyTasksPage(context: Context) {
+fun DailyTasksPage(context: Context, snackbarHostState: SnackbarHostState) {
     val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val questions: Array<String> = stringArrayResource(id = R.array.questions)
-
+    val okLabel = stringResource(R.string.ok)
+    val answerEmpty = stringResource(R.string.daily_task_answer_empty)
+    
     var questionsDialog by remember {
         mutableStateOf(false)
     }
@@ -54,6 +62,8 @@ fun DailyTasksPage(context: Context) {
     var questionsAnswer by remember {
         mutableStateOf("")
     }
+
+    val scope = rememberCoroutineScope()
 
     fun saveAnswers(
         index: Int,
@@ -155,14 +165,26 @@ fun DailyTasksPage(context: Context) {
                     TextButton(onClick = {
                         questionsDialog = false
                         val time = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date())
-                        saveAnswers(
-                            questionsIndex + 1,
-                            questionsIndex,
-                            questionsAnswer,
-                            time,
-                            sharedPrefs
-                        )
-                        questionsAnswer = ""
+                        if (questionsAnswer.isEmpty()) {
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = answerEmpty,
+                                    actionLabel = okLabel,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                            questionsAnswer = ""
+                            keyboardController!!.hide()
+                        } else {
+                            saveAnswers(
+                                questionsIndex + 1,
+                                questionsIndex,
+                                questionsAnswer,
+                                time,
+                                sharedPrefs
+                            )
+                            questionsAnswer = ""
+                        }
                     }
                     ) {
                         Text(
@@ -246,6 +268,6 @@ fun DailyTasksPage(context: Context) {
 @Composable
 fun DailyTasksPagePreview() {
     AffirmationsTheme {
-        DailyTasksPage(LocalContext.current)
+        DailyTasksPage(LocalContext.current, SnackbarHostState())
     }
 }

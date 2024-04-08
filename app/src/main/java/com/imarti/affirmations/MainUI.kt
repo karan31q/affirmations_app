@@ -194,7 +194,7 @@ fun MainUI(navController: NavHostController) {
             if (journalPage) {
                 JournalPage(context, snackbarHostState)
             } else if (dailyTasksPage) {
-                DailyTasksPage(context)
+                DailyTasksPage(context, snackbarHostState)
             } else {
                 AffirmationsPage(AffirmationsApi.retrofitService, context)
             }
