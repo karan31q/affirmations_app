@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
@@ -49,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.imarti.affirmations.fetch.AffirmationsApi
 import com.imarti.affirmations.pages.AffirmationsPage
+import com.imarti.affirmations.pages.DailyTasksPage
 import com.imarti.affirmations.pages.JournalPage
 import com.imarti.affirmations.ui.theme.AffirmationsTheme
 import com.imarti.affirmations.ui.theme.HarmonyOS_Sans
@@ -68,6 +71,11 @@ fun MainUI(navController: NavHostController) {
             Icons.Filled.Create,
             Icons.Outlined.Create
 
+        ),
+        NavigationItems(
+            "Daily Tasks",
+            Icons.Filled.CheckCircle,
+            Icons.Outlined.CheckCircle
         )
     )
 
@@ -75,6 +83,9 @@ fun MainUI(navController: NavHostController) {
         mutableIntStateOf(0)
     }
     var journalPage by remember {
+        mutableStateOf(false)
+    }
+    var dailyTasksPage by remember {
         mutableStateOf(false)
     }
     val snackbarHostState = remember {
@@ -133,7 +144,15 @@ fun MainUI(navController: NavHostController) {
                         selected = selectedItem == index,
                         onClick = {
                             selectedItem = index
-                            journalPage = selectedItem == 1
+                            if (selectedItem == 1) {
+                                journalPage = true
+                            } else if (selectedItem == 2) {
+                                dailyTasksPage = true
+                                journalPage = false
+                            } else {
+                                journalPage = false
+                                dailyTasksPage = false
+                            }
                         },
                         icon = {
                             Icon(
@@ -174,6 +193,8 @@ fun MainUI(navController: NavHostController) {
             // if it works it works
             if (journalPage) {
                 JournalPage(context, snackbarHostState)
+            } else if (dailyTasksPage) {
+                DailyTasksPage(context, snackbarHostState)
             } else {
                 AffirmationsPage(AffirmationsApi.retrofitService, context)
             }
