@@ -131,7 +131,7 @@ fun JournalPage(context: Context, snackbarHostState: SnackbarHostState) {
                     ) {
                         Text(
                             entry.text,
-                            style = MaterialTheme.typography.headlineLarge,
+                            style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.fillMaxWidth(),
                             fontFamily = HarmonyOS_Sans
                         )
