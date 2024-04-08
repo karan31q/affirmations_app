@@ -98,7 +98,7 @@ fun DailyTasksPage(context: Context, snackbarHostState: SnackbarHostState) {
     }
 
     fun getCurrentQuestionFill(sharedPrefs: SharedPreferences): Int {
-        return sharedPrefs.getInt("prev_ques_completed", 0) + 1
+        return sharedPrefs.getInt("previous_question", 0) + 1
     }
 
     LazyColumn(
