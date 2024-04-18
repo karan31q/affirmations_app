@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,6 +49,9 @@ fun AffirmationsPage(affirmationsApi: FetchAffirmationsService, context: Context
     var canFetchAffirmation by remember {
         mutableStateOf(false)
     }
+    var isAffirmationLoading by remember {
+        mutableStateOf(true)
+    }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -65,7 +69,8 @@ fun AffirmationsPage(affirmationsApi: FetchAffirmationsService, context: Context
             affirmation = errorAffirmationString
             affirmationSource = ""
             canFetchAffirmation = false
-
+        } finally {
+            isAffirmationLoading = false
         }
     }
 
@@ -79,23 +84,30 @@ fun AffirmationsPage(affirmationsApi: FetchAffirmationsService, context: Context
                 fetchAffirmation(affirmationsApi)
             }
         }
-        Text(
-            text = affirmation,
-            fontFamily = HarmonyOS_Sans,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Justify,
-            maxLines = 4
-        )
-        Text(
-            text = affirmationSource,
-            fontFamily = HarmonyOS_Sans,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
+        if (isAffirmationLoading) {
+            CircularProgressIndicator()
+        } else {
+            Text(
+                text = affirmation,
+                fontFamily = HarmonyOS_Sans,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Justify,
+                maxLines = 4
+            )
+        }
+        if (canFetchAffirmation) {
+            Text(
+                text = affirmationSource,
+                fontFamily = HarmonyOS_Sans,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
         if (!canFetchAffirmation) {
             Button(
                 onClick = {
+                    isAffirmationLoading = true
                     CoroutineScope(Dispatchers.IO).launch {
                         fetchAffirmation(affirmationsApi)
                     }
