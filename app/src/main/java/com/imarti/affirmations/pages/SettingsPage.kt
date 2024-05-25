@@ -2,6 +2,7 @@ package com.imarti.affirmations.pages
 
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -89,6 +91,9 @@ fun SettingsPage(navController: NavHostController) {
     var showUserNameDialog by remember {
         mutableStateOf(false)
     }
+    var alarmCancelButtonState by remember {
+        mutableStateOf(sharedPrefs.getBoolean("alarm_set", false))
+    }
     val snackbarHostState = remember {
         SnackbarHostState()
     }
@@ -110,6 +115,19 @@ fun SettingsPage(navController: NavHostController) {
             cancelAlarm(context) // cancel alarm if dismissed
         }
     )
+
+    val sharedPrefsListener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+        if (key == "alarm_set") {
+            alarmCancelButtonState = prefs.getBoolean("alarm_set", false)
+        }
+    }
+
+    DisposableEffect(sharedPrefs) {
+        sharedPrefs.registerOnSharedPreferenceChangeListener(sharedPrefsListener)
+        onDispose {
+            sharedPrefs.unregisterOnSharedPreferenceChangeListener(sharedPrefsListener)
+        }
+    }
 
     Scaffold(
         modifier = Modifier
@@ -277,11 +295,12 @@ fun SettingsPage(navController: NavHostController) {
                     )
                 }
                 TextButton(
+                    enabled = alarmCancelButtonState,
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
                         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     ),
                     contentPadding = PaddingValues(15.dp),
                     onClick = {
