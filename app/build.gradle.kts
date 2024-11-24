@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.imarti.affirmations"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.imarti.affirmations"
