@@ -160,14 +160,6 @@ fun MainUI(navController: NavHostController) {
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .paint(
-                    painterResource(id = R.drawable.app_bg),
-                    contentScale = ContentScale.FillBounds,
-                    colorFilter = ColorFilter.tint(
-                        color = MaterialTheme.colorScheme.primary
-                    ),
-                    alpha = 0.5f
-                )
                 .padding(innerPadding)
                 .fillMaxSize()
                 .padding(start = 10.dp, end = 10.dp, top = 20.dp, bottom = 20.dp),

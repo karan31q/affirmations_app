@@ -11,9 +11,6 @@ you can ignore it and continue installation or scan the app if you would like to
 Pull requests are welcome. For major changes,\
 Please open an issue first to discuss what you would like to change.
 
-## Credits
-[Background Image](https://in.pinterest.com/pin/140806230791241/)
-
 ## License
 
 [MIT](https://github.com/karan31q/affirmations_app/blob/main/LICENSE/)\
