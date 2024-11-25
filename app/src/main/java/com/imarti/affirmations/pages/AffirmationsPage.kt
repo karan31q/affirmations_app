@@ -4,9 +4,12 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -76,65 +81,80 @@ fun AffirmationsPage(affirmationsApi: FetchAffirmationsService, context: Context
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top
     ) {
         LaunchedEffect(Unit) {
             coroutineScope.launch {
                 fetchAffirmation(affirmationsApi)
             }
         }
-        if (isAffirmationLoading) {
-            CircularProgressIndicator()
-        } else {
-            Text(
-                text = affirmation,
-                fontFamily = HarmonyOS_Sans,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Justify,
-                maxLines = 4
-            )
-        }
-        if (canFetchAffirmation) {
-            Text(
-                text = affirmationSource,
-                fontFamily = HarmonyOS_Sans,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-        if (!canFetchAffirmation) {
-            Button(
-                onClick = {
-                    isAffirmationLoading = true
-                    CoroutineScope(Dispatchers.IO).launch {
-                        fetchAffirmation(affirmationsApi)
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(10.dp)
+            ) {
+                if (isAffirmationLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    Text(
+                        text = affirmation,
+                        fontFamily = HarmonyOS_Sans,
+                        style = MaterialTheme.typography.bodyLarge,
+                        maxLines = 4
+                    )
+                    if (canFetchAffirmation) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = affirmationSource,
+                                fontFamily = HarmonyOS_Sans,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontStyle = FontStyle.Italic
+                            )
+                            val sendIntent: Intent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_TEXT, "$affirmation\nby: $affirmationSource")
+                                type = "text/plain"
+                            }
+                            val shareIntent = Intent.createChooser(sendIntent, null)
+                            Button(
+                                onClick = { context.startActivity(shareIntent) }
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.share_button),
+                                    fontFamily = HarmonyOS_Sans,
+                                )
+                            }
+                        }
                     }
-                },
-                modifier = Modifier.padding(top = 5.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.refresh_affirmation),
-                    fontFamily = HarmonyOS_Sans
-                )
-            }
-        }
-        if (canFetchAffirmation) {
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, "$affirmation\nby: $affirmationSource")
-                type = "text/plain"
-            }
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            Button(
-                onClick = { context.startActivity(shareIntent) },
-                modifier = Modifier.padding(top = 5.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.share_button),
-                    fontFamily = HarmonyOS_Sans
-                )
+                }
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.SpaceEvenly,
+                    horizontalAlignment = Alignment.End
+                ) {
+                    if (!canFetchAffirmation) {
+                        Button(
+                            onClick = {
+                                isAffirmationLoading = true
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    fetchAffirmation(affirmationsApi)
+                                }
+                            },
+                            modifier = Modifier.padding(top = 5.dp),
+                        ) {
+                            Text(
+                                text = stringResource(R.string.refresh_affirmation),
+                                fontFamily = HarmonyOS_Sans
+                            )
+                        }
+                    }
+                }
             }
         }
     }
