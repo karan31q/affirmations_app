@@ -2,11 +2,11 @@
     <string name="app_name">Affirmations</string>
     <string name="topbar_heading">Daily Affirmations</string>
     <string name="topbar_settings_button">Settings Button</string>
-    <string name="share_button">Share</string>
+    <string name="share_button">Share affirmation</string>
     <string name="settings_menu_heading">Settings</string>
     <string name="settings_menu_back_button">Back button</string>
     <string name="empty_username_warning">No username entered\nUsing default username</string>
-    <string name="refresh_affirmation">Refresh</string>
+    <string name="refresh_affirmation">Refresh affirmation</string>
     <string name="ok">OK</string>
     <string name="username_updated">Username updated</string>
     <string name="restart_app_notification">Please restart app for changes to take effect</string>

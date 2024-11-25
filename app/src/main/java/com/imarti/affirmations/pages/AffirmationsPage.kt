@@ -8,9 +8,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,8 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.imarti.affirmations.R
@@ -90,7 +93,8 @@ fun AffirmationsPage(affirmationsApi: FetchAffirmationsService, context: Context
             }
         }
         Card(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp)
         ) {
             Column(
                 modifier = Modifier.padding(10.dp)
@@ -106,7 +110,9 @@ fun AffirmationsPage(affirmationsApi: FetchAffirmationsService, context: Context
                     )
                     if (canFetchAffirmation) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .padding(top = 4.dp)
+                                .fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
@@ -125,9 +131,9 @@ fun AffirmationsPage(affirmationsApi: FetchAffirmationsService, context: Context
                             Button(
                                 onClick = { context.startActivity(shareIntent) }
                             ) {
-                                Text(
-                                    text = stringResource(R.string.share_button),
-                                    fontFamily = HarmonyOS_Sans,
+                                Icon(
+                                    Icons.Outlined.Share,
+                                    contentDescription = stringResource(R.string.share_button)
                                 )
                             }
                         }
@@ -146,11 +152,11 @@ fun AffirmationsPage(affirmationsApi: FetchAffirmationsService, context: Context
                                     fetchAffirmation(affirmationsApi)
                                 }
                             },
-                            modifier = Modifier.padding(top = 5.dp),
+                            modifier = Modifier.padding(top = 4.dp),
                         ) {
-                            Text(
-                                text = stringResource(R.string.refresh_affirmation),
-                                fontFamily = HarmonyOS_Sans
+                            Icon(
+                                Icons.Outlined.Refresh,
+                                stringResource(R.string.refresh_affirmation),
                             )
                         }
                     }
