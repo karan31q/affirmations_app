@@ -13,11 +13,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Create
-import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -61,9 +61,9 @@ fun MainUI(navController: NavHostController) {
 
     val items = listOf(
         NavigationItems(
-            "Affirmations",
-            Icons.Filled.Favorite,
-            Icons.Outlined.FavoriteBorder
+            "Home",
+            Icons.Filled.Home,
+            Icons.Outlined.Home
         ),
         NavigationItems(
             "Journal",
