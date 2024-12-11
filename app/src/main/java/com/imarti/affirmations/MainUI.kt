@@ -169,7 +169,13 @@ fun MainUI(navController: NavHostController) {
             when (selectedItem) {
                 1 -> JournalPage(context, snackbarHostState)
                 2 -> DailyTasksPage(context, snackbarHostState)
-                else -> AffirmationsPage(AffirmationsApi.retrofitService, context)
+                else -> AffirmationsPage(
+                    AffirmationsApi.retrofitService,
+                    context,
+                    onChangePageButton = {
+                        selectedItem = 2
+                    }
+                )
             }
         }
     }
