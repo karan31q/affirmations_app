@@ -122,44 +122,15 @@ fun JournalPage(context: Context, snackbarHostState: SnackbarHostState) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             journalEntries.forEachIndexed { index, entry ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(
-                            entry.text,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.fillMaxWidth(),
-                            fontFamily = HarmonyOS_Sans
-                        )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                entry.dateTime,
-                                style = MaterialTheme.typography.bodySmall,
-                                fontFamily = HarmonyOS_Sans
-                            )
-                            IconButton(
-                                onClick = {
-                                    deleteJournalEntry(index, sharedPrefs)
-                                    // update entries after deleting
-                                    journalEntries = getJournalEntries(sharedPrefs)
-                                }
-                            ) {
-                                Icon(
-                                    Icons.Outlined.Delete,
-                                    stringResource(R.string.delete_journal)
-                                )
-                            }
-                        }
+                JournalCardView(
+                    entry.text,
+                    entry.dateTime,
+                    showDeleteButton = true,
+                    onDelete = {
+                        deleteJournalEntry(index, sharedPrefs)
+                        journalEntries = getJournalEntries(sharedPrefs)
                     }
-                }
+                )
             }
         }
     }
@@ -210,9 +181,13 @@ fun deleteJournalEntry(index: Int, sharedPrefs: SharedPreferences) {
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun JournalCardView() {
+fun JournalCardView(
+    journalText: String,
+    journalDateTime: String,
+    showDeleteButton: Boolean = true,
+    onDelete: () -> Unit = {}
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
@@ -221,8 +196,9 @@ fun JournalCardView() {
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                "Journal",
-                style = MaterialTheme.typography.headlineLarge,
+                journalText,
+                // entry.text,
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.fillMaxWidth(),
                 fontFamily = HarmonyOS_Sans
             )
@@ -232,16 +208,22 @@ fun JournalCardView() {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    "01/03/2024, 12:00",
+                    journalDateTime,
+                    // entry.dateTime,
                     style = MaterialTheme.typography.bodySmall,
+                    fontFamily = HarmonyOS_Sans
                 )
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(
-                        Icons.Outlined.Delete,
-                        "Delete Journal Entry"
-                    )
+                if (showDeleteButton) {
+                    IconButton(
+                        onClick = {
+                            onDelete()
+                        }
+                    ) {
+                        Icon(
+                            Icons.Outlined.Delete,
+                            stringResource(R.string.delete_journal)
+                        )
+                    }
                 }
             }
         }

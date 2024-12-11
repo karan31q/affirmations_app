@@ -87,81 +87,105 @@ fun AffirmationsPage(affirmationsApi: FetchAffirmationsService, context: Context
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
-        LaunchedEffect(Unit) {
-            coroutineScope.launch {
-                fetchAffirmation(affirmationsApi)
-            }
-        }
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
+        Column(
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .fillMaxWidth()
         ) {
-            Column(
-                modifier = Modifier.padding(10.dp)
+            Text(
+                "AFFIRMATION",
+                fontFamily = HarmonyOS_Sans,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+        Column{
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    fetchAffirmation(affirmationsApi)
+                }
+            }
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp)
             ) {
-                if (isAffirmationLoading) {
-                    CircularProgressIndicator()
-                } else {
-                    Text(
-                        text = affirmation,
-                        fontFamily = HarmonyOS_Sans,
-                        style = MaterialTheme.typography.bodyLarge,
-                        maxLines = 4
-                    )
-                    if (canFetchAffirmation) {
-                        Row(
-                            modifier = Modifier
-                                .padding(top = 4.dp)
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = affirmationSource,
-                                fontFamily = HarmonyOS_Sans,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontStyle = FontStyle.Italic
-                            )
-                            val sendIntent: Intent = Intent().apply {
-                                action = Intent.ACTION_SEND
-                                putExtra(Intent.EXTRA_TEXT, "$affirmation\nby: $affirmationSource")
-                                type = "text/plain"
+                Column(
+                    modifier = Modifier.padding(10.dp)
+                ) {
+                    if (isAffirmationLoading) {
+                        CircularProgressIndicator()
+                    } else {
+                        Text(
+                            text = affirmation,
+                            fontFamily = HarmonyOS_Sans,
+                            style = MaterialTheme.typography.bodyLarge,
+                            maxLines = 4
+                        )
+                        if (canFetchAffirmation) {
+                            Row(
+                                modifier = Modifier
+                                    .padding(top = 4.dp)
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = affirmationSource,
+                                    fontFamily = HarmonyOS_Sans,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontStyle = FontStyle.Italic
+                                )
+                                val sendIntent: Intent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, "$affirmation\nby: $affirmationSource")
+                                    type = "text/plain"
+                                }
+                                val shareIntent = Intent.createChooser(sendIntent, null)
+                                Button(
+                                    onClick = { context.startActivity(shareIntent) }
+                                ) {
+                                    Icon(
+                                        Icons.Outlined.Share,
+                                        contentDescription = stringResource(R.string.share_button)
+                                    )
+                                }
                             }
-                            val shareIntent = Intent.createChooser(sendIntent, null)
+                        }
+                    }
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        if (!canFetchAffirmation) {
                             Button(
-                                onClick = { context.startActivity(shareIntent) }
+                                onClick = {
+                                    isAffirmationLoading = true
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        fetchAffirmation(affirmationsApi)
+                                    }
+                                },
+                                modifier = Modifier.padding(top = 4.dp),
                             ) {
                                 Icon(
-                                    Icons.Outlined.Share,
-                                    contentDescription = stringResource(R.string.share_button)
+                                    Icons.Outlined.Refresh,
+                                    stringResource(R.string.refresh_affirmation),
                                 )
                             }
                         }
                     }
                 }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                    horizontalAlignment = Alignment.End
-                ) {
-                    if (!canFetchAffirmation) {
-                        Button(
-                            onClick = {
-                                isAffirmationLoading = true
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    fetchAffirmation(affirmationsApi)
-                                }
-                            },
-                            modifier = Modifier.padding(top = 4.dp),
-                        ) {
-                            Icon(
-                                Icons.Outlined.Refresh,
-                                stringResource(R.string.refresh_affirmation),
-                            )
-                        }
-                    }
-                }
             }
+        }
+        Column(
+            modifier = Modifier
+                .padding(start = 10.dp, top = 20.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                "RECENT JOURNAL ENTRIES",
+                fontFamily = HarmonyOS_Sans,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }
