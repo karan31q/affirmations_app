@@ -122,42 +122,60 @@ fun JournalPage(context: Context, snackbarHostState: SnackbarHostState) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             journalEntries.forEachIndexed { index, entry ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(
-                            entry.text,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.fillMaxWidth(),
-                            fontFamily = HarmonyOS_Sans
-                        )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                entry.dateTime,
-                                style = MaterialTheme.typography.bodySmall,
-                                fontFamily = HarmonyOS_Sans
-                            )
-                            IconButton(
-                                onClick = {
-                                    deleteJournalEntry(index, sharedPrefs)
-                                    // update entries after deleting
-                                    journalEntries = getJournalEntries(sharedPrefs)
-                                }
-                            ) {
-                                Icon(
-                                    Icons.Outlined.Delete,
-                                    stringResource(R.string.delete_journal)
-                                )
-                            }
+                JournalCard(
+                    entry.text,
+                    entry.dateTime,
+                    onDelete = {
+                        deleteJournalEntry(index, sharedPrefs)
+                        // update entries after deleting
+                        journalEntries = getJournalEntries(sharedPrefs)
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun JournalCard(
+    entryText: String,
+    entryDateTime: String,
+    showDeleteButton: Boolean = true,
+    onDelete: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(10.dp)
+        ) {
+            Text(
+                entryText,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.fillMaxWidth(),
+                fontFamily = HarmonyOS_Sans
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    entryDateTime,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontFamily = HarmonyOS_Sans
+                )
+                if (showDeleteButton) {
+                    IconButton(
+                        onClick = {
+                            onDelete()
                         }
+                    ) {
+                        Icon(
+                            Icons.Outlined.Delete,
+                            stringResource(R.string.delete_journal)
+                        )
                     }
                 }
             }
@@ -207,44 +225,6 @@ fun deleteJournalEntry(index: Int, sharedPrefs: SharedPreferences) {
         val entriesIndex = entriesArray.length() - index - 1
         entriesArray.remove(entriesIndex)
         sharedPrefs.edit().putString("entries", entriesArray.toString()).apply()
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun JournalCardView() {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(8.dp),
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                "Journal",
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.fillMaxWidth(),
-                fontFamily = HarmonyOS_Sans
-            )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    "01/03/2024, 12:00",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(
-                        Icons.Outlined.Delete,
-                        "Delete Journal Entry"
-                    )
-                }
-            }
-        }
     }
 }
 
