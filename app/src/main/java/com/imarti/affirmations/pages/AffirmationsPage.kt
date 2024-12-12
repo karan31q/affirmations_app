@@ -11,14 +11,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,9 +53,15 @@ fun AffirmationsPage(
     context: Context,
     onChangePageButton: () -> Unit
 ) {
+    val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+
     // so it can be used with coroutines
     val errorAffirmationString = stringResource(R.string.error_affirmation)
     val affirmationUnknownAuthor = stringResource(R.string.unknown)
+
+    val questions: Array<String> = stringArrayResource(id = R.array.questions)
+    val currentQuestionIndex = sharedPrefs.getInt("previous_question", 0)
+    val todayQuestion = questions[currentQuestionIndex]
 
     var affirmation by remember {
         mutableStateOf("")
@@ -182,20 +192,41 @@ fun AffirmationsPage(
         }
         Column(
             modifier = Modifier
-                .padding(start = 10.dp, top = 10.dp)
                 .fillMaxWidth(),
         ) {
             Text(
                 "TODAY'S QUESTION",
                 fontFamily = HarmonyOS_Sans,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 10.dp, top = 10.dp)
             )
-            Button(
-                onClick = {
-                    onChangePageButton()
-                }
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp)
             ) {
-                Text("Change to daily tasks")
+                Column(
+                    modifier = Modifier.padding(10.dp)
+                ) {
+                    Text(
+                        todayQuestion,
+                        fontFamily = HarmonyOS_Sans
+                    )
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Button(
+                            onClick = {
+                                onChangePageButton()
+                            }
+                        ) {
+                            Text(
+                                text = "Answer",
+                                fontFamily = HarmonyOS_Sans
+                            )
+                        }
+                    }
+                }
             }
         }
         Column(
