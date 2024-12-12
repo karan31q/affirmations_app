@@ -199,6 +199,14 @@ fun saveJournalEntry(text: String, sharedPrefs: SharedPreferences) {
     sharedPrefs.edit().putString("entries", entriesArray.toString()).apply()
 }
 
+fun getLatestJournalEntry(sharedPrefs: SharedPreferences): JournalEntry? {
+    val entriesList = getJournalEntries(sharedPrefs)
+    return if (entriesList.isNotEmpty()) {
+        entriesList[0]
+    } else {
+        null
+    }
+}
 fun getJournalEntries(sharedPrefs: SharedPreferences): List<JournalEntry> {
     val entriesJson = sharedPrefs.getString("entries", "[]")
     val entriesArray = JSONArray(entriesJson)

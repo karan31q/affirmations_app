@@ -229,16 +229,25 @@ fun AffirmationsPage(
                 }
             }
         }
-        Column(
-            modifier = Modifier
-                .padding(start = 10.dp, top = 10.dp)
-                .fillMaxWidth(),
-        ) {
-            Text(
-                "RECENT JOURNAL ENTRY",
-                fontFamily = HarmonyOS_Sans,
-                style = MaterialTheme.typography.bodySmall
-            )
+        val latestJournalEntry = getLatestJournalEntry(sharedPrefs)
+        if (latestJournalEntry != null) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+            ) {
+                Text(
+                    "RECENT JOURNAL ENTRY",
+                    fontFamily = HarmonyOS_Sans,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 10.dp, top = 10.dp)
+                )
+                JournalCard(
+                    latestJournalEntry.text,
+                    latestJournalEntry.dateTime,
+                    showDeleteButton = false,
+                    onDelete = {}
+                )
+            }
         }
     }
 }
