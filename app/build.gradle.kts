@@ -11,7 +11,7 @@ android {
         applicationId = "com.imarti.affirmations"
         minSdk = 29
         targetSdk = 34
-        versionCode = 1
+        versionCode = 2
         versionName = "1.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
