@@ -327,7 +327,7 @@ fun SetupUI(navController: NavHostController) {
                     )
                     Icon(
                         if (userNameWritten) icon1.stepDone else icon1.stepNotDone,
-                        tint = if (userNameWritten) MaterialTheme.colorScheme.tertiary else Color.Red,
+                        tint = if (userNameWritten) Color.Green else Color.Red,
                         contentDescription = if (userNameWritten) stringResource(R.string.username_written_desc) else stringResource(
                             R.string.username_not_written_desc
                         )
@@ -345,7 +345,7 @@ fun SetupUI(navController: NavHostController) {
                     )
                     Icon(
                         if (notificationTimeSelected) icon2.stepDone else icon2.stepNotDone,
-                        tint = if (notificationTimeSelected) MaterialTheme.colorScheme.tertiary else Color.Red,
+                        tint = if (notificationTimeSelected) Color.Green else Color.Red,
                         contentDescription = if (notificationTimeSelected) stringResource(R.string.notification_time_selected_desc) else stringResource(
                             R.string.notification_time_not_selected_desc
                         )
