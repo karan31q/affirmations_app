@@ -352,8 +352,9 @@ fun SettingsPage(navController: NavHostController) {
                                 SnackbarResult.ActionPerformed -> {
                                     activity?.finish()
                                 }
-
-                                SnackbarResult.Dismissed -> TODO()
+                                SnackbarResult.Dismissed -> {
+                                    activity?.finish()
+                                }
                             }
                         }
                     },
