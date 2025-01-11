@@ -41,6 +41,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -326,7 +327,7 @@ fun SetupUI(navController: NavHostController) {
                     )
                     Icon(
                         if (userNameWritten) icon1.stepDone else icon1.stepNotDone,
-                        tint = if (userNameWritten) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
+                        tint = if (userNameWritten) MaterialTheme.colorScheme.tertiary else Color.Red,
                         contentDescription = if (userNameWritten) stringResource(R.string.username_written_desc) else stringResource(
                             R.string.username_not_written_desc
                         )
@@ -344,7 +345,7 @@ fun SetupUI(navController: NavHostController) {
                     )
                     Icon(
                         if (notificationTimeSelected) icon2.stepDone else icon2.stepNotDone,
-                        tint = if (notificationTimeSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
+                        tint = if (notificationTimeSelected) MaterialTheme.colorScheme.tertiary else Color.Red,
                         contentDescription = if (notificationTimeSelected) stringResource(R.string.notification_time_selected_desc) else stringResource(
                             R.string.notification_time_not_selected_desc
                         )
